@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,24 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">{children}
+        <div className="fixed top-4 left-5">
+          <Link href="/main" className="inline-flex items-center justify-center bg-black text-white rounded-full h-10 w-10 cursor-pointer hover:bg-neutral-900 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+          </Link>
+        </div>
+        <div className="fixed top-4 right-4 flex flex-row gap-2">
+          <Link href="/login" className="bg-black text-white rounded px-4 py-2 cursor-pointer hover:bg-neutral-900">
+              Kirjaudu
+          </Link>
+          <Link href="/signup" className="bg-black text-white rounded px-4 py-2 cursor-pointer hover:bg-neutral-900">
+              Rekisteröidy
+          </Link>
+        </div>
+      </body>
     </html>
   );
 }
+
