@@ -30,7 +30,7 @@ export default function NavBar() {
     return (
         <>
             <div className="fixed top-4 left-5">
-                <Link href="/" className="inline-flex items-center justify-center bg-black text-white rounded-full h-10 w-10 cursor-pointer hover:bg-neutral-900 transition-colors">
+                <Link href="/" className="inline-flex items-center justify-center bg-black text-white rounded-full h-10 w-10 cursor-pointer hover:bg-neutral-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                     </svg>
@@ -38,15 +38,20 @@ export default function NavBar() {
             </div>
                 <div className="fixed top-4 right-4 flex flex-row gap-2">
                     {user ? (
-                        <button onClick={handleLogout} className="bg-black text-white rounded px-3 py-2 cursor-pointer hover:bg-neutral-900">
-                            Kirjaudu ulos
-                        </button>
+                        <>
+                            <span className="mt-2">{user.email}</span>
+                            <button onClick={handleLogout} className="bg-black text-white rounded-full px-2 py-2 cursor-pointer hover:bg-neutral-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                </svg>
+                            </button>
+                        </>
                     ) : (
                         <>
-                            <Link href="/login" className="bg-black text-white rounded px-4 py-2 cursor-pointer hover:bg-neutral-900">
+                            <Link href="/login" className="bg-black text-white rounded px-4 py-2 cursor-pointer hover:bg-neutral-800">
                                 Kirjaudu
                             </Link>
-                            <Link href="/signup" className="bg-black text-white rounded px-4 py-2 cursor-pointer hover:bg-neutral-900">
+                            <Link href="/signup" className="bg-black text-white rounded px-4 py-2 cursor-pointer hover:bg-neutral-800">
                                 Rekisteröidy
                             </Link>
                         </>
