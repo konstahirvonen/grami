@@ -3,12 +3,14 @@
 import { use, useState } from "react"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("")
     const [isError, setIsError] = useState(false)
+    const router = useRouter()
 
     const showMessage = (text: string, error: boolean = false) => {
         setMessage(text)
@@ -22,6 +24,7 @@ export default function LoginPage() {
                 showMessage(error.message, true)
             } else {
                 showMessage("Kirjautuminen onnistui!")
+                router.push("/")
             }
         }
 

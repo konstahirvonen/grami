@@ -1,6 +1,7 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function SignUpPage() {
@@ -8,6 +9,7 @@ export default function SignUpPage() {
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("")
     const [isError, setIsError] = useState(false)
+    const router = useRouter()
 
     const showMessage = (text: string, error: boolean = false) => {
         setMessage(text)
@@ -21,6 +23,7 @@ export default function SignUpPage() {
                 showMessage(error.message, true)
             } else {
                 showMessage("Rekisteröinti onnistui!")
+                router.push("/login")
         }
     }
 
