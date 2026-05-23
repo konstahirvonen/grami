@@ -1,10 +1,10 @@
-Päivittäisten kaloreiden seurantasovellus.
+# Päivittäisten kaloreiden seurantasovellus.
 
-Mikä tämä on?
+## Mikä tämä on?
 
 Grami on ainakin alkuun web-pohjainen ravinto- ja painon seurantasovellus, jonka ydinajatus on tehdä päivittäisestä kalorien kirjaamisesta mahdollisimman vaivatonta.
 
-Ominaisuudet:
+## Ominaisuudet:
 
 -Päivittäinen ruokapäiväkirja grammoilla.
 
@@ -14,7 +14,7 @@ Ominaisuudet:
 
 -Säännöllisen kehonpainon kirjaus (päivä, viikko tasolla) ja kehityksen seuranta kuvaajalla.
 
-Teknologiat:
+## Teknologiat:
 
 -Next.JS
 
@@ -26,7 +26,7 @@ Teknologiat:
 
 -Recharts (painokehityksen kuvaajat)
 
-Kehitysvaiheet:
+## Kehitysvaiheet:
 
 -Vaihe 1 (MVP) - Kirjautuminen, ruoan lisäys, makrolaskenta, painonseuranta
 
@@ -34,7 +34,7 @@ Kehitysvaiheet:
 
 -Vaihe 3 - ...
 
-Kehitysympäristö:
+## Kehitysympäristö:
 
 npm install
 
