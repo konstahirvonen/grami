@@ -4,10 +4,10 @@ import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-
 export default function Home() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [weight, setWeight] = useState("")
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -18,6 +18,27 @@ export default function Home() {
       }
     })
   }, [])
+
+  const handleAddWeight = async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+
+
+    //TODO: Tarkistus tähän ettei samana päivänä voi laittaa kuin yhden painon!
+    const { error } = await supabase
+      .from("weight")
+      .insert({
+        user_id: session?.user.id,
+        weight_kg: parseFloat(weight),
+        date: new Date().toISOString().split("T")[0]
+      })
+      
+    if (error) {
+      console.log(error.message)
+    } else {
+      console.log("Paino tallennettu!")
+      setWeight("")
+    }
+  }
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -59,9 +80,11 @@ export default function Home() {
             <input
               type="number"
               placeholder="kg"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
               className="border rounded px-3 py-2 w-24 text-gray-500"
             />
-            <button className="bg-black text-white rounded px-4 py-2 hover: bg-neutral-800 cursor-pointer">
+            <button onClick={handleAddWeight} className="bg-black text-white rounded px-4 py-2 hover: bg-neutral-800 cursor-pointer">
               Lisää
             </button>
           </div>
