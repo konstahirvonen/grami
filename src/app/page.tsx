@@ -1,7 +1,7 @@
 "use client"
 
+import WeightChart from "@/components/weightchart"
 import { supabase } from "@/lib/supabase"
-import { refresh } from "next/cache"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -15,12 +15,14 @@ export default function Home() {
   const [fat, setFat] = useState("")
   const [goalsOpen, setGoalsOpen] = useState(false)
   const [goals, setGoals] = useState<any>(null)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) {
         router.push("/login")
       } else {
+        setUser(user)
         setLoading(false)
 
         supabase
@@ -94,27 +96,27 @@ export default function Home() {
 
         <div className="relative grid grid-cols-4 gap-4 mb-8 border-2 border-blue-600 rounded-xl">
           <div className="p-4 text-center">
-            <p className="text-sm text-white">Kalorit</p>
+            <p className="text-m text-white font-semibold">Kalorit</p>
             <p className="text-2xl font-bold text-white">0</p>
-            <p className="text-sm text-white">/ {goals?.calories ?? "-"} kcal</p>
+            <p className="text-m text-white font-semibold">/ {goals?.calories ?? "-"} kcal</p>
           </div>
 
           <div className="p-4 text-center">
-            <p className="text-sm text-white">Proteiini</p>
-            <p className="text-2xl font-bold text-white">g</p>
-            <p className="text-sm text-white">/ {goals?.protein ?? "-"} g</p>
+            <p className="text-m text-white font-semibold">Proteiini</p>
+            <p className="text-2xl font-bold text-white">0</p>
+            <p className="text-m text-white font-semibold">/ {goals?.protein ?? "-"} g</p>
           </div>
 
           <div className="p-4 text-center">
-            <p className="text-sm text-white">Hiilihydraatit</p>
-            <p className="text-2xl font-bold text-white">g</p>
-            <p className="text-sm text-white">/ {goals?.carbs ?? "-"} g</p>
+            <p className="text-m text-white font-semibold">Hiilihydraatit</p>
+            <p className="text-2xl font-bold text-white">0</p>
+            <p className="text-m text-white font-semibold">/ {goals?.carbs ?? "-"} g</p>
           </div>
 
           <div className="p-4 text-center">
-            <p className="text-sm text-white">Rasva</p>
-            <p className="text-2xl font-bold text-white">g</p>
-            <p className="text-sm text-white">/ {goals?.fat ?? "-"} g</p>
+            <p className="text-m text-white font-semibold">Rasva</p>
+            <p className="text-2xl font-bold text-white">0</p>
+            <p className="text-m text-white font-semibold">/ {goals?.fat ?? "-"} g</p>
           </div>
 
           <div className="absolute top-2 right-2">
@@ -166,21 +168,29 @@ export default function Home() {
           
         </div>
 
-        <div className="border-2 border-blue-600 rounded-xl p-4 self-start">
-            <h2 className="font-semibold mb-2 text-white">Kehonpaino</h2>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                placeholder="kg"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                className="border border-blue-600 rounded px-3 py-2 w-24 text-white"
-              />
-              <button onClick={handleAddWeight} className="text-white font-semibold rounded px-4 py-2 hover:bg-neutral-800 cursor-pointer">
-                Lisää
-              </button>
-            </div>
+        <div className="flex gap-4 items-start">
+          <div className="border-2 border-blue-600 rounded-xl p-4 self-start">
+              <h2 className="font-semibold mb-2 text-white">Kehonpaino</h2>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="kg"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="border border-blue-600 rounded px-3 py-2 w-24 text-white"
+                />
+                <button onClick={handleAddWeight} className="text-white font-semibold rounded px-4 py-2 hover:bg-neutral-800 cursor-pointer">
+                  Lisää
+                </button>
+              </div>
+          </div>
+
+          <div className="border-2 border-blue-600 rounded-xl p-4 flex-1">
+            <h2 className="font-semibold text-center">Painokuvaaja</h2>
+            {user && <WeightChart userId={user.id} />}
+          </div>
         </div>
+
       </div>
     </div>
   )
