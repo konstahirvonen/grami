@@ -8,6 +8,11 @@ export default function Home() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [weight, setWeight] = useState("")
+  const [calories, setCalorie] = useState("")
+  const [protein, setProtein] = useState("")
+  const [carbs, setCarbs] = useState("")
+  const [fat, setFat] = useState("")
+  const [goalsOpen, setGoalsOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -18,6 +23,30 @@ export default function Home() {
       }
     })
   }, [])
+
+  const handleGoals = async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+
+    const { error } = await supabase
+      .from("goals")
+      .upsert({
+        user_id: session?.user.id,
+        calories: parseInt(calories),
+        protein: parseInt(protein),
+        carbs: parseInt(carbs),
+        fat: parseInt(fat)
+      }, { onConflict: "user_id" })
+
+    if (error) {
+      console.log(error.message)
+    } else {
+      console.log("Tavoitteet tallennettu!")
+      setCalorie("")
+      setProtein("")
+      setCarbs("")
+      setFat("")
+    }
+  }
 
   const handleAddWeight = async () => {
     const { data: { session } } = await supabase.auth.getSession()
@@ -47,49 +76,59 @@ export default function Home() {
   )
 
   return (
-    <div className="max-w-4x1 mx-auto px-4 py-8">
+    <div>
+      <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col">
 
-      <div className="grid grid-cols-5 gap-4 mb-8">
-        <div className="bg-gray-100 rounded-xl p-4 text-center">
-          <p className="text-sm text-gray-500">Kalorit</p>
-          <p className="text-2xl font-bold text-gray-500">0</p>
-          <p className="text-sm text-gray-500">/  kcal</p>
-        </div>
+        <div className="relative grid grid-cols-4 gap-4 mb-8 border-2 border-blue-600 rounded-xl">
+          <div className="p-4 text-center">
+            <p className="text-sm text-white">Kalorit</p>
+            <p className="text-2xl font-bold text-white">0</p>
+            <p className="text-sm text-white">/  kcal</p>
+          </div>
 
-        <div className="bg-gray-100 rounded-xl p-4 text-center">
-          <p className="text-sm text-gray-500">Proteiini</p>
-          <p className="text-2xl font-bold text-gray-500">g</p>
-          <p className="text-sm text-gray-500">/ g</p>
-        </div>
+          <div className="p-4 text-center">
+            <p className="text-sm text-white">Proteiini</p>
+            <p className="text-2xl font-bold text-white">g</p>
+            <p className="text-sm text-white">/ g</p>
+          </div>
 
-        <div className="bg-gray-100 rounded-xl p-4 text-center">
-          <p className="text-sm text-gray-500">Hiilihydraatit</p>
-          <p className="text-2xl font-bold text-gray-500">g</p>
-          <p className="text-sm text-gray-500">/ g</p>
-        </div>
+          <div className="p-4 text-center">
+            <p className="text-sm text-white">Hiilihydraatit</p>
+            <p className="text-2xl font-bold text-white">g</p>
+            <p className="text-sm text-white">/ g</p>
+          </div>
 
-        <div className="bg-gray-100 rounded-xl p-4 text-center">
-          <p className="text-sm text-gray-500">Rasva</p>
-          <p className="text-2xl font-bold text-gray-500">g</p>
-          <p className="text-sm text-gray-500">/ g</p>
-        </div>
+          <div className="p-4 text-center">
+            <p className="text-sm text-white">Rasva</p>
+            <p className="text-2xl font-bold text-white">g</p>
+            <p className="text-sm text-white">/ g</p>
+          </div>
 
-        <div className="bg-gray-100 rounded-xl p-4">
-          <h2 className="font-semibold mb-4 text-gray-500">Kehonpaino</h2>
-          <div className="flex gap-2">
-            <input
-              type="number"
-              placeholder="kg"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              className="border rounded px-3 py-2 w-24 text-gray-500"
-            />
-            <button onClick={handleAddWeight} className="bg-black text-white rounded px-4 py-2 hover: bg-neutral-800 cursor-pointer">
-              Lisää
+          <div className="absolute top-2 right-2">
+            <button onClick={() => setGoalsOpen(true)} className="hover:bg-neutral-800 cursor-pointer rounded-full p-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
             </button>
           </div>
+          
         </div>
 
+        <div className="border-2 border-blue-600 rounded-xl p-4 self-start">
+            <h2 className="font-semibold mb-2 text-white">Kehonpaino</h2>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                placeholder="kg"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                className="border border-blue-600 rounded px-3 py-2 w-24 text-white"
+              />
+              <button onClick={handleAddWeight} className="text-white font-semibold rounded px-4 py-2 hover:bg-neutral-800 cursor-pointer">
+                Lisää
+              </button>
+            </div>
+        </div>
       </div>
     </div>
   )
