@@ -20,9 +20,9 @@ export default function WeightChart({ userId }: {userId: string}) {
         <ResponsiveContainer width="100%" height={300}>
             <LineChart data={weightData}>
                 <CartesianGrid  strokeDasharray="2 2"/>
-                <XAxis dataKey="date" stroke="#ffffff" />
+                <XAxis dataKey="date" stroke="#ffffff" tickFormatter={(date) => new Date(date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})} />
                 <YAxis stroke="#ffffff" domain={["auto", "auto"]} />
-                <Line type="monotone" dataKey="weight_kg" stroke="#2563eb" strokeWidth={2} dot={{fill: ""}} activeDot={{stroke: ""}}/>
+                <Line type="monotone" dataKey="weight_kg" stroke="#2563eb" strokeWidth={2} dot={{fill: ""}} isAnimationActive={false} activeDot={false}/>
             </LineChart>
         </ResponsiveContainer>
     )

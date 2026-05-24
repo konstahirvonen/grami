@@ -16,6 +16,7 @@ export default function Home() {
   const [goalsOpen, setGoalsOpen] = useState(false)
   const [goals, setGoals] = useState<any>(null)
   const [user, setUser] = useState<any>(null)
+  const [weightData, setWeightData] = useState<any[]>([])
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -33,17 +34,25 @@ export default function Home() {
           .then(({ data }) => {
             if (data) setGoals(data)
           })
+
+          supabase
+            .from("weight")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("date", { ascending: true})
+            .then(({ data }) => {
+                if (data) setWeightData(data)
+            })
       }
     })
   }, [])
 
   const handleGoals = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
 
     const { error } = await supabase
       .from("goals")
       .upsert({
-        user_id: session?.user.id,
+        user_id: user.id,
         calories: parseInt(calories),
         protein: parseInt(protein),
         carbs: parseInt(carbs),
@@ -64,14 +73,13 @@ export default function Home() {
   }
 
   const handleAddWeight = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
 
 
     //TODO: Tarkistus tähän ettei samana päivänä voi laittaa kuin yhden painon!
     const { error } = await supabase
       .from("weight")
       .insert({
-        user_id: session?.user.id,
+        user_id: user.id,
         weight_kg: parseFloat(weight),
         date: new Date().toISOString().split("T")[0]
       })
@@ -80,6 +88,7 @@ export default function Home() {
       console.log(error.message)
     } else {
       console.log("Paino tallennettu!")
+      setWeightData((prev) => [...prev, { weight_kg: parseFloat(weight), date: new Date().toISOString().split("T")[0]}])
       setWeight("")
     }
   }
@@ -125,9 +134,55 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
               </svg>
             </button>
-            {goalsOpen && (
+          </div>
+          
+          
+        </div>
+
+        <div className="flex gap-4 items-stretch">
+          <div className="border-2 border-blue-600 rounded-xl p-4">
+              <h2 className="font-semibold mb-2 text-white text-center">Kehonpaino</h2>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="kg"
+                  value={weight}
+                  onChange={(e) => setWeight(e.target.value)}
+                  className="border border-blue-600 rounded px-3 py-2 w-24 text-white"
+                />
+                <button onClick={handleAddWeight} className="text-white font-semibold rounded px-4 py-2 hover:bg-neutral-800 cursor-pointer">
+                  Lisää
+                </button>
+              </div>
+              <div className="h-64 overflow-y-auto mt-4">
+                <table className="table-auto w-full border-separate border-spacing-0">
+                  <thead className="sticky top-0 bg-[#171717]">
+                    <tr>
+                      <th className="border border-gray-300 dark:border-gray-600">Paino</th>
+                      <th className="border border-gray-300 dark:border-gray-600">PVM</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-right">
+                      {weightData.map((row) => (
+                        <tr key={row.id ?? row.date}>
+                          <td className="border border-gray-300 dark:border-gray-600 pr-2">{row.weight_kg}</td>
+                          <td className="border border-gray-300 dark:border-gray-600 pr-2">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          <div className="border-2 border-blue-600 rounded-xl p-4 flex-1">
+            <h2 className="font-semibold text-center">Painokuvaaja</h2>
+            {user && <WeightChart userId={user.id} />}
+          </div>
+        </div>
+
+        {goalsOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-                  <div className="relative border-2 border-blue-600 rounded-xl p-6 flex flex-col gap-4 w-80">
+                  <div className="relative bg-[#171717] border-2 border-blue-600 rounded-xl p-6 flex flex-col gap-4 w-80">
 
                     <div className="flex items-center justify-between">
                       <h2 className="font-semibold">Aseta tavoitteet</h2>
@@ -164,32 +219,6 @@ export default function Home() {
                   </div>
                 </div>
               )}
-          </div>
-          
-        </div>
-
-        <div className="flex gap-4 items-start">
-          <div className="border-2 border-blue-600 rounded-xl p-4 self-start">
-              <h2 className="font-semibold mb-2 text-white">Kehonpaino</h2>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  placeholder="kg"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  className="border border-blue-600 rounded px-3 py-2 w-24 text-white"
-                />
-                <button onClick={handleAddWeight} className="text-white font-semibold rounded px-4 py-2 hover:bg-neutral-800 cursor-pointer">
-                  Lisää
-                </button>
-              </div>
-          </div>
-
-          <div className="border-2 border-blue-600 rounded-xl p-4 flex-1">
-            <h2 className="font-semibold text-center">Painokuvaaja</h2>
-            {user && <WeightChart userId={user.id} />}
-          </div>
-        </div>
 
       </div>
     </div>
