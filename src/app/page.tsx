@@ -17,6 +17,12 @@ export default function Home() {
   const [goals, setGoals] = useState<any>(null)
   const [user, setUser] = useState<any>(null)
   const [weightData, setWeightData] = useState<any[]>([])
+  const [message, setMessage] = useState("")
+
+  const showMessage = (text: string) => {
+        setMessage(text)
+        setTimeout(() => setMessage(""), 3000)
+    }
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -74,21 +80,33 @@ export default function Home() {
 
   const handleAddWeight = async () => {
 
+    const today = new Date().toISOString().split("T")[0]
 
-    //TODO: Tarkistus tähän ettei samana päivänä voi laittaa kuin yhden painon!
+    const { data: existing } = await supabase
+      .from("weight")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("date", today)
+      .maybeSingle()
+
+    if (existing) {
+      showMessage("Olet jo lisännyt painon tänään.")
+      return
+    }
+
     const { error } = await supabase
       .from("weight")
       .insert({
         user_id: user.id,
         weight_kg: parseFloat(weight),
-        date: new Date().toISOString().split("T")[0]
+        date: today
       })
       
     if (error) {
       console.log(error.message)
     } else {
       console.log("Paino tallennettu!")
-      setWeightData((prev) => [...prev, { weight_kg: parseFloat(weight), date: new Date().toISOString().split("T")[0]}])
+      setWeightData((prev) => [...prev, { weight_kg: parseFloat(weight), date: today}])
       setWeight("")
     }
   }
@@ -154,6 +172,11 @@ export default function Home() {
                   Lisää
                 </button>
               </div>
+              {message && (
+                    <div className={"fixed top-4 left-1/2 -translate-x-1/2 text-white bg-red-500 text-center px-4 py-2 rounded shadow-lg"}>
+                        {message}
+                    </div>
+                )}
               <div className="h-64 overflow-y-auto mt-4">
                 <table className="table-auto w-full border-separate border-spacing-0">
                   <thead className="sticky top-0 bg-[#171717]">
@@ -219,7 +242,6 @@ export default function Home() {
                   </div>
                 </div>
               )}
-
       </div>
     </div>
   )
