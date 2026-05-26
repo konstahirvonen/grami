@@ -121,7 +121,7 @@ export default function Home() {
     <div>
       <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col">
 
-        <div className="relative grid grid-cols-4 gap-4 mb-8 border-2 border-blue-600 rounded-xl">
+        <div className="relative grid grid-cols-4 gap-4 mb-4 border-2 border-blue-600">
           <div className="p-4 text-center">
             <p className="text-m text-white font-semibold">Kalorit</p>
             <p className="text-2xl font-bold text-white">0</p>
@@ -158,7 +158,7 @@ export default function Home() {
         </div>
 
         <div className="flex gap-4 items-stretch">
-          <div className="border-2 border-blue-600 rounded-xl p-4">
+          <div className="border-2 border-blue-600 p-4">
               <h2 className="font-semibold mb-2 text-white text-center">Kehonpaino</h2>
               <div className="flex gap-2">
                 <input
@@ -166,7 +166,7 @@ export default function Home() {
                   placeholder="kg"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
-                  className="border border-blue-600 rounded px-3 py-2 w-24 text-white"
+                  className="border border-blue-600 px-3 py-2 w-24 text-white"
                 />
                 <button onClick={handleAddWeight} className="text-white font-semibold rounded px-4 py-2 hover:bg-neutral-800 cursor-pointer">
                   Lisää
@@ -197,7 +197,7 @@ export default function Home() {
               </div>
             </div>
 
-          <div className="border-2 border-blue-600 rounded-xl p-4 flex-1">
+          <div className="border-2 border-blue-600 p-4 flex-1">
             <h2 className="font-semibold text-center">Painokuvaaja</h2>
             {user && <WeightChart userId={user.id} />}
           </div>

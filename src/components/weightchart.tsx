@@ -1,9 +1,45 @@
 import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { DayPicker, getDefaultClassNames } from "react-day-picker"
+import "react-day-picker/dist/style.css"
+import { DateRange } from "react-day-picker"
 
 export default function WeightChart({ userId }: {userId: string}) {
     const [weightData, setWeightData] = useState<any[]>([])
+    const [range, setRange] = useState("7d")
+    const [dateRangeOpen, setDateRangeOpen] = useState(false)
+    const [dateRange, setDateRange] = useState<DateRange | undefined>()
+    const defaultClassNames = getDefaultClassNames();
+
+    const fetchWeightData = async (startDate: string, endDate?: string) => {
+        let query = supabase
+            .from("weight")
+            .select("*")
+            .eq("user_id", userId)
+            .gte("date", startDate)
+            .order("date", { ascending: true })
+
+        if (endDate) {
+            query = query.lte("date", endDate)
+        }
+
+        const { data } = await query
+        if (data) setWeightData(data)
+    }
+
+    const toLocalDate = (date: Date) => {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+    }
+
+    useEffect(() => {
+        const start = new Date()
+        if (range === "7d") start.setDate(start.getDate() - 7)
+        if (range === "1m") start.setDate(start.getMonth() - 1)
+        if (range === "1y") start.setDate(start.getFullYear() - 1)
+
+        fetchWeightData(toLocalDate(start))
+    }, [range])
 
     useEffect(() => {
         supabase
@@ -17,13 +53,72 @@ export default function WeightChart({ userId }: {userId: string}) {
     }, [])
 
     return (
-        <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={weightData}>
-                <CartesianGrid  strokeDasharray="2 2"/>
-                <XAxis dataKey="date" stroke="#ffffff" tickFormatter={(date) => new Date(date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})} />
-                <YAxis stroke="#ffffff" domain={["auto", "auto"]} />
-                <Line type="monotone" dataKey="weight_kg" stroke="#2563eb" strokeWidth={2} dot={{fill: ""}} isAnimationActive={false} activeDot={false}/>
-            </LineChart>
-        </ResponsiveContainer>
+        <div>
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={weightData}>
+                    <CartesianGrid  strokeDasharray="2 2"/>
+                    <XAxis dataKey="date" stroke="#ffffff" tickFormatter={(date) => new Date(date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})} />
+                    <YAxis stroke="#ffffff" domain={["auto", "auto"]} />
+                    <Line type="monotone" dataKey="weight_kg" stroke="#2563eb" strokeWidth={2} dot={{fill: ""}} isAnimationActive={false} activeDot={false}/>
+                </LineChart>
+            </ResponsiveContainer>
+            <div className="flex gap-2">
+                <button onClick={() => setRange("7d")} className="text-white font-semibold rounded px-2 py-1 hover:bg-neutral-800 cursor-pointer">7D</button>
+                <button onClick={() => setRange("1m")} className="text-white font-semibold rounded px-2 py-1 hover:bg-neutral-800 cursor-pointer">1M</button>
+                <button onClick={() => setRange("1y")} className="text-white font-semibold rounded px-2 py-1 hover:bg-neutral-800 cursor-pointer">1Y</button>
+                <button onClick={() => setDateRangeOpen(true)} className="text-white font-semibold rounded px-2 py-1 hover:bg-neutral-800 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
+                    </svg>
+                </button>
+            </div>
+            {dateRangeOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+                    <div className="bg-[#171717] border-2 border-blue-600 rounded-xl p-6 flex flex-col gap-4">
+                        <div className="flex items-center justify-between">
+                            <h2 className="font-semibold text-white">Valitse aikaväli</h2>
+                            <button onClick={() => setDateRangeOpen(false)} className="hover:bg-neutral-800 cursor-pointer rounded-full p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div className="flex gap-2 items-center">
+                            <DayPicker
+                                animate
+                                mode="range"
+                                selected={dateRange}
+                                onSelect={setDateRange}
+                                classNames={{
+                                    chevron: "fill-blue-500",
+                                    button_next: "hover:bg-neutral-800 rounded",
+                                    button_previous: "hover:bg-neutral-800 rounded", 
+                                    today: "transparent",
+                                    selected: "bg-blue-500",
+                                    range_start: "bg-blue-500 font-semibold text-black",
+                                    range_middle: "bg-neutral-800 font-semibold",
+                                    range_end: "bg-blue-500 font-semibold text-black"
+                                }}
+                            />
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button
+                                onClick={() => {
+                                    if (dateRange?.from && dateRange?.to) {
+                                        fetchWeightData(
+                                            toLocalDate(dateRange.from),
+                                            toLocalDate(dateRange.to)
+                                        )
+                                        setDateRangeOpen(false)
+                                    }
+                                }} 
+                                className="text-white font-semibold rounded px-4 py-2 hover:bg-neutral-800 cursor-pointer">
+                                Hae
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     )
 }

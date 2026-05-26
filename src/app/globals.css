@@ -19,6 +19,12 @@
   }
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -28,4 +34,8 @@ body {
 *:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.rdp-today.rdp-selected .rdp-day_button {
+    color: black !important;
 }
