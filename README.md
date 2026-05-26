@@ -1,6 +1,6 @@
 # Päivittäisten kaloreiden seurantasovellus.
 
-# grami.vercel.app
+# 🔗 [grami.vercel.app](https://grami.vercel.app)
 
 ## Mikä tämä on?
 
