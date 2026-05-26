@@ -221,19 +221,19 @@ export default function Home() {
                     
                     <input type="number" placeholder="Kalorit (kcal)" value={calories}
                       onChange={(e) => setCalorie(e.target.value)}
-                      className="border rounded px-3 py-2"
+                      className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
                     <input type="number" placeholder="Proteiini (g)" value={protein}
                       onChange={(e) => setProtein(e.target.value)}
-                      className="border rounded px-3 py-2"
+                      className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
                     <input type="number" placeholder="Hiilihydraatit (g)" value={carbs}
                       onChange={(e) => setCarbs(e.target.value)}
-                      className="border rounded px-3 py-2"
+                      className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
                     <input type="number" placeholder="Rasva (g)" value={fat}
                       onChange={(e) => setFat(e.target.value)}    
-                      className="border rounded px-3 py-2"                
+                      className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"                
                     />
 
                     <div className="flex items-center justify-center">
