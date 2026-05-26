@@ -106,7 +106,10 @@ export default function Home() {
       console.log(error.message)
     } else {
       console.log("Paino tallennettu!")
-      setWeightData((prev) => [...prev, { weight_kg: parseFloat(weight), date: today}])
+      setWeightData((prev) =>
+        [...prev, { weight_kg: parseFloat(weight), date: today}]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      )
       setWeight("")
     }
   }
@@ -199,7 +202,7 @@ export default function Home() {
 
           <div className="border-2 border-blue-600 p-4 flex-1">
             <h2 className="font-semibold text-center">Painokuvaaja</h2>
-            {user && <WeightChart userId={user.id} />}
+            {user && <WeightChart userId={user.id} weightData={weightData} />}
           </div>
         </div>
 

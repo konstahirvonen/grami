@@ -5,7 +5,7 @@ import { DayPicker, getDefaultClassNames } from "react-day-picker"
 import "react-day-picker/dist/style.css"
 import { DateRange } from "react-day-picker"
 
-export default function WeightChart({ userId }: {userId: string}) {
+export default function WeightChart({ userId, weightData: initialData }: {userId: string, weightData: any[]}) {
     const [weightData, setWeightData] = useState<any[]>([])
     const [range, setRange] = useState("7d")
     const [dateRangeOpen, setDateRangeOpen] = useState(false)
@@ -47,10 +47,28 @@ export default function WeightChart({ userId }: {userId: string}) {
         fetchWeightData(toLocalDate(start))
     }, [range])
 
+    const filteredData = weightData.filter((row) => {
+        const start = new Date()
+        if (range === "7d") start.setDate(start.getDate() - 7)
+        else if (range === "1m") start.setMonth(start.getMonth() - 1)
+        else if (range === "1y") start.setFullYear(start.getFullYear() - 1)
+        else return true
+        return new Date(row.date) >= start
+    })
+
+    useEffect(() => {
+        const start = new Date()
+        if (range === "7d") start.setDate(start.getDate() - 7)
+        else if (range === "1m") start.setMonth(start.getMonth() - 1)
+        else if (range === "1y") start.setFullYear(start.getFullYear() - 1)
+
+        fetchWeightData(toLocalDate(start))
+    }, [range, initialData])
+
     return (
         <div>
             <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={weightData}>
+                <LineChart data={filteredData}>
                     <CartesianGrid  strokeDasharray="2 2"/>
                     <XAxis dataKey="date" stroke="#ffffff" tickFormatter={(date) => new Date(date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})} />
                     <YAxis stroke="#ffffff" domain={["auto", "auto"]} />
