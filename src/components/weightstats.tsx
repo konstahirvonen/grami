@@ -1,0 +1,98 @@
+import { supabase } from "@/lib/supabase"
+import { useEffect, useState } from "react"
+
+export default function WeightStats({ userId, weightData: initialData}: { userId: string, weightData: any[]}) {
+    const [weightData, setWeightData] = useState<any[]>([])
+    const [range, setRange] = useState("7d")
+    
+    const fetchWeightData = async (startDate: string, endDate?: string) => {
+            let query = supabase
+                .from("weight")
+                .select("*")
+                .eq("user_id", userId)
+                .gte("date", startDate)
+                .order("date", { ascending: true })
+    
+            if (endDate) {
+                query = query.lte("date", endDate)
+            }
+    
+            const { data } = await query
+            if (data) setWeightData(data)
+        }
+
+    const toLocalDate = (date: Date) => {
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+    }
+
+    const getWeightChange = (days: number) => {
+        const start = new Date()
+        start.setDate(start.getDate() - days)
+        start.setHours(0, 0, 0, 0)
+        const filtered = weightData.filter(row => new Date(row.date) >= start)
+        if (filtered.length < 2) return null
+        const sorted = [...filtered].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        const oldestWeight = sorted[0].weight_kg;
+        const newestWeight = sorted[sorted.length - 1].weight_kg;
+
+        return newestWeight - oldestWeight;
+    }
+
+    useEffect(() => {
+        if (initialData.length > 0) {
+            setWeightData(initialData)
+        }
+    }, [initialData])
+
+    const change7d = getWeightChange(7)
+    const change30d = getWeightChange(30)
+    const change180d = getWeightChange(180)
+    const change365d = getWeightChange(365)
+
+    useEffect(() => {
+        const start = new Date()
+        if (range === "7d") start.setDate(start.getDate() - 7)
+        else if (range === "1m") start.setMonth(start.getMonth() - 1)
+        else if (range === "6m") start.setMonth(start.getMonth() - 6)
+        else if (range === "1y") start.setFullYear(start.getFullYear() - 1)
+
+        fetchWeightData(toLocalDate(start))
+    }, [range, initialData])
+
+    return (
+        <div>
+
+            <h2 className="p-4 text-center font-semibold text-m">Painon muutos</h2>
+
+            <div className="p-4 text-center">
+                <p className="text-m text-white font-semibold">7 D</p>
+                <p className={`text-2xl font-bold ${change7d !== null ? change7d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                    {change7d !== null ? `${change7d > 0 ? "+" : ""}${change7d.toFixed(2)} kg` : "-"}
+                </p>
+            </div>
+
+            <div className="p-4 text-center">
+                <p className="text-m text-white font-semibold">30 D</p>
+                <p className={`text-2xl font-bold ${change30d !== null ? change30d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                    {change30d !== null ? `${change30d > 0 ? "+" : ""}${change30d.toFixed(2)} kg` : "-"}
+                </p>
+            </div>
+
+            <div className="p-4 text-center">
+                <p className="text-m text-white font-semibold">180 D</p>
+                <p className={`text-2xl font-bold ${change180d !== null ? change180d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                    {change180d !== null ? `${change180d > 0 ? "+" : ""}${change180d.toFixed(2)} kg` : "-"}
+                </p>
+            </div>
+
+            <div className="p-4 text-center">
+                <p className="text-m text-white font-semibold">365 D</p>
+                <p className={`text-2xl font-bold ${change365d !== null ? change365d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                    {change365d !== null ? `${change365d > 0 ? "+" : ""}${change365d.toFixed(2)} kg` : "-"}
+                </p>
+            </div>
+
+        </div>
+    )
+}

@@ -1,6 +1,7 @@
 "use client"
 
 import WeightChart from "@/components/weightchart"
+import WeightStats from "@/components/weightstats"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -116,13 +117,13 @@ export default function Home() {
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#10b981] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
     <div>
-      <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col">
+      <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col">
 
         <div className="relative grid grid-cols-4 gap-4 mb-4 bg-[#2f2f2f] border-1 border-[#404040] rounded-xl">
           <div className="p-4 text-center">
@@ -184,8 +185,8 @@ export default function Home() {
                 <table className="table-auto w-full border-separate border-spacing-0">
                   <thead className="sticky top-0 bg-[#212121]">
                     <tr>
-                      <th className="border border-[#404040]">Paino</th>
                       <th className="border border-[#404040]">PVM</th>
+                      <th className="border border-[#404040]">Paino</th>
                     </tr>
                   </thead>
                   <tbody className="text-right">
@@ -204,6 +205,11 @@ export default function Home() {
             <h2 className="font-semibold text-center">Painokuvaaja</h2>
             {user && <WeightChart userId={user.id} weightData={weightData} />}
           </div>
+
+          <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl flex">
+            {user && <WeightStats userId="user_id" weightData={weightData}/>}
+          </div>
+
         </div>
 
         {goalsOpen && (
