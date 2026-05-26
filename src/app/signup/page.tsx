@@ -43,7 +43,7 @@ export default function SignUpPage() {
                     placeholder="Sähköposti"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="border rounded px-3 py-2"
+                    className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                 />
 
                 <input 
@@ -51,17 +51,17 @@ export default function SignUpPage() {
                     placeholder="Salasana"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="border rounded px-3 py-2"
+                    className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                 />
 
-                <button onClick={handleSignUp} disabled={isLoading} className="bg-black text-white rounded px-3 py-2 cursor-pointer hover:bg-neutral-900 disabled:bg-black disabled:cursor-not-allowed">
+                <button onClick={handleSignUp} disabled={isLoading} className="bg-[#303030] border-1 border-[#404040] text-white font-semibold rounded-xl px-3 py-2 cursor-pointer hover:bg-neutral-900 disabled:bg-black disabled:cursor-not-allowed">
                     {isLoading ? (
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
                     ) : "Rekisteröidy"}
                 </button>
 
                 {message && (
-                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded shadow-lg ${isError ? 'bg-red-800' : 'bg-green-800'}`}>
+                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded-xl shadow-lg ${isError ? 'bg-red-800' : 'bg-green-800'}`}>
                         {message}
                     </div>
                 )}
