@@ -171,7 +171,7 @@ export default function Home() {
                   onChange={(e) => setWeight(e.target.value)}
                   className="border border-[#404040] rounded-xl px-3 py-2 w-24 text-white"
                 />
-                <button onClick={handleAddWeight} className="text-white font-semibold rounded-xl px-4 py-2 hover:bg-neutral-900 cursor-pointer">
+                <button onClick={handleAddWeight} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
                   Lisää
                 </button>
               </div>
@@ -238,7 +238,7 @@ export default function Home() {
 
                     <div className="flex items-center justify-center">
                       <button onClick={handleSaveGoals}
-                        className="text-white font-semibold rounded-xl px-4 py-2 hover:bg-neutral-900 cursor-pointer">
+                        className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
                         Tallenna
                       </button>
                     </div>

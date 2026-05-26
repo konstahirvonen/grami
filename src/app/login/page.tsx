@@ -55,7 +55,7 @@ export default function LoginPage() {
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                 />
 
-                <button onClick={handleLogin} disabled={isLoading} className="bg-[#303030] border-1 border-[#404040] text-white font-semibold rounded-xl px-3 py-2 cursor-pointer hover:bg-neutral-900 disabled:bg-black disabled:cursor-not-allowed">
+                <button onClick={handleLogin} disabled={isLoading} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-3 py-2 cursor-pointer hover:bg-[#0d9166] disabled:bg-black disabled:cursor-not-allowed">
                     {isLoading ? (
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
                     ) : "Kirjaudu"}

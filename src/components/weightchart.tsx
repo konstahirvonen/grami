@@ -88,9 +88,9 @@ export default function WeightChart({ userId, weightData: initialData }: {userId
                 </LineChart>
             </ResponsiveContainer>
             <div className="flex gap-2">
-                <button onClick={() => setRange("7d")} className="text-white font-semibold rounded-xl px-2 py-1 hover:bg-neutral-900 cursor-pointer">7D</button>
-                <button onClick={() => setRange("1m")} className="text-white font-semibold rounded-xl px-2 py-1 hover:bg-neutral-900 cursor-pointer">1M</button>
-                <button onClick={() => setRange("1y")} className="text-white font-semibold rounded-xl px-2 py-1 hover:bg-neutral-900 cursor-pointer">1Y</button>
+                <button onClick={() => setRange("7d")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "7d" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>7D</button>
+                <button onClick={() => setRange("1m")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "1m" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>1M</button>
+                <button onClick={() => setRange("1y")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "1y" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>1Y</button>
                 <button onClick={() => setDateRangeOpen(true)} className="text-white font-semibold rounded-xl px-2 py-1 hover:bg-neutral-900 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
@@ -102,13 +102,13 @@ export default function WeightChart({ userId, weightData: initialData }: {userId
                     <div className="bg-[#212121] border-1 border-[#404040] rounded-xl p-6 flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <h2 className="font-semibold text-white">Valitse aikaväli</h2>
-                            <button onClick={() => setDateRangeOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                            <button onClick={() => setDateRangeOpen(false)} className="border-1 border-[#404040] bg-[#303030] hover:bg-neutral-900 cursor-pointer rounded-full p-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
-                        <div className="flex gap-2 items-center">
+                        <div className="flex gap-2 items-center p-2">
                             <DayPicker
                                 animate
                                 mode="range"
@@ -137,7 +137,7 @@ export default function WeightChart({ userId, weightData: initialData }: {userId
                                         setDateRangeOpen(false)
                                     }
                                 }} 
-                                className="text-white font-semibold rounded-xl px-4 py-2 hover:bg-neutral-900 cursor-pointer">
+                                className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
                                 Hae
                             </button>
                         </div>
