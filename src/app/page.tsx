@@ -45,7 +45,7 @@ export default function Home() {
             .from("weight")
             .select("*")
             .eq("user_id", user.id)
-            .order("date", { ascending: true})
+            .order("date", { ascending: false})
             .then(({ data }) => {
                 if (data) setWeightData(data)
             })
@@ -188,8 +188,8 @@ export default function Home() {
                   <tbody className="text-right">
                       {weightData.map((row) => (
                         <tr key={row.id ?? row.date}>
-                          <td className="border border-gray-300 dark:border-gray-600 pr-2">{row.weight_kg}</td>
                           <td className="border border-gray-300 dark:border-gray-600 pr-2">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})}</td>
+                          <td className="border border-gray-300 dark:border-gray-600 pr-2">{row.weight_kg}</td>
                         </tr>
                       ))}
                   </tbody>

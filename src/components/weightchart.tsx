@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 import { DayPicker, getDefaultClassNames } from "react-day-picker"
 import "react-day-picker/dist/style.css"
 import { DateRange } from "react-day-picker"
@@ -34,23 +34,18 @@ export default function WeightChart({ userId }: {userId: string}) {
 
     useEffect(() => {
         const start = new Date()
+        start.setDate(start.getDate() - 7)
+        fetchWeightData(toLocalDate(start))
+    }, [])
+
+    useEffect(() => {
+        const start = new Date()
         if (range === "7d") start.setDate(start.getDate() - 7)
-        if (range === "1m") start.setDate(start.getMonth() - 1)
-        if (range === "1y") start.setDate(start.getFullYear() - 1)
+        if (range === "1m") start.setMonth(start.getMonth() - 1)
+        if (range === "1y") start.setFullYear(start.getFullYear() - 1)
 
         fetchWeightData(toLocalDate(start))
     }, [range])
-
-    useEffect(() => {
-        supabase
-            .from("weight")
-            .select("*")
-            .eq("user_id", userId)
-            .order("date", { ascending: true})
-            .then(({ data }) => {
-                if (data) setWeightData(data)
-            })
-    }, [])
 
     return (
         <div>
@@ -59,7 +54,18 @@ export default function WeightChart({ userId }: {userId: string}) {
                     <CartesianGrid  strokeDasharray="2 2"/>
                     <XAxis dataKey="date" stroke="#ffffff" tickFormatter={(date) => new Date(date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})} />
                     <YAxis stroke="#ffffff" domain={["auto", "auto"]} />
-                    <Line type="monotone" dataKey="weight_kg" stroke="#2563eb" strokeWidth={2} dot={{fill: ""}} isAnimationActive={false} activeDot={false}/>
+                    <Tooltip
+                        formatter={(value) => [`${value} kg`, "Paino"]}
+                        labelFormatter={(date) => new Date(date).toLocaleDateString("fi-FI")}
+                        cursor={{
+                        stroke: "",
+                        }}
+                        contentStyle={{
+                        backgroundColor: "#262626",
+                        borderColor: "#2563eb",
+                        }}
+                    />
+                    <Line dataKey="weight_kg" stroke="#2563eb" strokeWidth={2} dot={{fill: ""}}  activeDot={{ stroke: "#2563eb"}}/>
                 </LineChart>
             </ResponsiveContainer>
             <div className="flex gap-2">
