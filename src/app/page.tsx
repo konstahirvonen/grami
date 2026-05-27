@@ -19,6 +19,7 @@ export default function Home() {
   const [user, setUser] = useState<any>(null)
   const [weightData, setWeightData] = useState<any[]>([])
   const [message, setMessage] = useState("")
+  const [chartRange, setChartRange] = useState("7d")
 
   const showMessage = (text: string) => {
         setMessage(text)
@@ -203,11 +204,11 @@ export default function Home() {
 
           <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl p-4 flex-1">
             <h2 className="font-semibold text-center">Painokuvaaja</h2>
-            {user && <WeightChart userId={user.id} weightData={weightData} />}
+            {user && <WeightChart userId={user.id} weightData={weightData} range={chartRange} setRange={setChartRange} />}
           </div>
 
           <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl">
-            {user && <WeightStats userId={user.id} weightData={weightData}/>}
+            {user && <WeightStats userId={user.id} weightData={weightData} chartRange={chartRange}/>}
           </div>
 
         </div>

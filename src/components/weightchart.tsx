@@ -5,9 +5,8 @@ import { DayPicker, getDefaultClassNames } from "react-day-picker"
 import "react-day-picker/dist/style.css"
 import { DateRange } from "react-day-picker"
 
-export default function WeightChart({ userId, weightData: initialData }: {userId: string, weightData: any[]}) {
+export default function WeightChart({ userId, weightData: initialData, range, setRange }: {userId: string, weightData: any[], range: string, setRange: (range: string) => void}) {
     const [weightData, setWeightData] = useState<any[]>([])
-    const [range, setRange] = useState("7d")
     const [dateRangeOpen, setDateRangeOpen] = useState(false)
     const [dateRange, setDateRange] = useState<DateRange | undefined>()
     const defaultClassNames = getDefaultClassNames();
@@ -42,7 +41,11 @@ export default function WeightChart({ userId, weightData: initialData }: {userId
         const start = new Date()
         if (range === "7d") start.setDate(start.getDate() - 7)
         if (range === "1m") start.setMonth(start.getMonth() - 1)
+        if (range === "3m") start.setMonth(start.getMonth() - 3)
+        if (range === "6m") start.setMonth(start.getMonth() - 6)
         if (range === "1y") start.setFullYear(start.getFullYear() - 1)
+        if (range === "ytd") start.setFullYear(start.getFullYear(), 0, 0)
+        if (range === "max") start.setFullYear(2000, 0, 1)
 
         fetchWeightData(toLocalDate(start))
     }, [range])
@@ -51,7 +54,10 @@ export default function WeightChart({ userId, weightData: initialData }: {userId
         const start = new Date()
         if (range === "7d") start.setDate(start.getDate() - 7)
         else if (range === "1m") start.setMonth(start.getMonth() - 1)
+        else if (range === "3m") start.setMonth(start.getMonth() - 3)
+        else if (range === "6m") start.setMonth(start.getMonth() - 6)
         else if (range === "1y") start.setFullYear(start.getFullYear() - 1)
+        else if (range === "ytd") start.setFullYear(start.getFullYear(), 0, 0)
         else return true
         return new Date(row.date) >= start
     })
@@ -60,7 +66,11 @@ export default function WeightChart({ userId, weightData: initialData }: {userId
         const start = new Date()
         if (range === "7d") start.setDate(start.getDate() - 7)
         else if (range === "1m") start.setMonth(start.getMonth() - 1)
+        else if (range === "3m") start.setMonth(start.getMonth() - 3)
+        else if (range === "6m") start.setMonth(start.getMonth() - 6)
         else if (range === "1y") start.setFullYear(start.getFullYear() - 1)
+        else if (range === "ytd") start.setFullYear(start.getFullYear(), 0, 0)
+        else if (range === "max") start.setFullYear(2000, 0, 1)
 
         fetchWeightData(toLocalDate(start))
     }, [range, initialData])
@@ -84,13 +94,17 @@ export default function WeightChart({ userId, weightData: initialData }: {userId
                         fontWeight: "600"
                         }}
                     />
-                    <Line dataKey="weight_kg" stroke="#10b981" strokeWidth={2} dot={{fill: ""}}  activeDot={{ stroke: "#10b981"}}/>
+                    <Line dataKey="weight_kg" stroke="#10b981" strokeWidth={2} dot={false}  activeDot={{ stroke: "#10b981"}}/>
                 </LineChart>
             </ResponsiveContainer>
             <div className="flex gap-2">
                 <button onClick={() => setRange("7d")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "7d" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>7D</button>
                 <button onClick={() => setRange("1m")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "1m" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>1M</button>
+                <button onClick={() => setRange("3m")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "3m" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>3M</button>
+                <button onClick={() => setRange("6m")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "6m" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>6M</button>
                 <button onClick={() => setRange("1y")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "1y" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>1Y</button>
+                <button onClick={() => setRange("ytd")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "ytd" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>YTD</button>
+                <button onClick={() => setRange("max")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "max" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>Max</button>
                 <button onClick={() => setDateRangeOpen(true)} className="text-white font-semibold rounded-xl px-2 py-1 hover:bg-neutral-900 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
