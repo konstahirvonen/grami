@@ -11,6 +11,7 @@ export default function SignUpPage() {
     const [isError, setIsError] = useState(false)
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+    const [confirmPassword, setConfirmPassword] = useState("")
 
     const showMessage = (text: string, error: boolean = false) => {
         setMessage(text)
@@ -19,6 +20,12 @@ export default function SignUpPage() {
     }
 
     const handleSignUp = async () => {
+
+        if (password !== confirmPassword) {
+            showMessage("Salasanat eivät täsmää", true)
+            return
+        }
+
         const { error } = await supabase.auth.signUp({ email, password })
 
         setIsLoading(true)
@@ -32,6 +39,7 @@ export default function SignUpPage() {
                 setTimeout(() => {router.push("/login")}, 500)
         }
     }
+
 
     return (
         <div className="min-h-screen flex items-center justify-center">
@@ -51,6 +59,14 @@ export default function SignUpPage() {
                     placeholder="Salasana"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
+                />
+
+                <input 
+                    type="password"
+                    placeholder="Vahvista salasana"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                 />
 
