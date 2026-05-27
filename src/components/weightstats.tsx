@@ -66,34 +66,35 @@ export default function WeightStats({ userId, weightData: initialData}: { userId
 
             <h2 className="p-4 text-center font-semibold text-m">Painon muutos</h2>
 
-            <div className="p-3 text-center">
-                <p className="text-m text-white font-semibold">1 D</p>
-                <p className={`text-2xl font-bold ${change1d !== null ? change1d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
-                    {change1d !== null ? `${change1d > 0 ? "+" : ""}${change1d.toFixed(2)} kg` : "-"}
-                </p>
-            </div>
+            <div className="grid grid-cols-2 md:grid-cols-1">
+                <div className="p-3 text-center">
+                    <p className="text-m text-white font-semibold">1 D</p>
+                    <p className={`text-2xl font-bold ${change1d !== null ? change1d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                        {change1d !== null ? `${change1d > 0 ? "+" : ""}${change1d.toFixed(2)} kg` : "-"}
+                    </p>
+                </div>
 
-            <div className="p-3 text-center">
-                <p className="text-m text-white font-semibold">7 D</p>
-                <p className={`text-2xl font-bold ${change7d !== null ? change7d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
-                    {change7d !== null ? `${change7d > 0 ? "+" : ""}${change7d.toFixed(2)} kg` : "-"}
-                </p>
-            </div>
+                <div className="p-3 text-center">
+                    <p className="text-m text-white font-semibold">7 D</p>
+                    <p className={`text-2xl font-bold ${change7d !== null ? change7d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                        {change7d !== null ? `${change7d > 0 ? "+" : ""}${change7d.toFixed(2)} kg` : "-"}
+                    </p>
+                </div>
 
-            <div className="p-3 text-center">
-                <p className="text-m text-white font-semibold">1 </p>
-                <p className={`text-2xl font-bold ${change30d !== null ? change30d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
-                    {change30d !== null ? `${change30d > 0 ? "+" : ""}${change30d.toFixed(2)} kg` : "-"}
-                </p>
-            </div>
+                <div className="p-3 text-center">
+                    <p className="text-m text-white font-semibold">1 </p>
+                    <p className={`text-2xl font-bold ${change30d !== null ? change30d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                        {change30d !== null ? `${change30d > 0 ? "+" : ""}${change30d.toFixed(2)} kg` : "-"}
+                    </p>
+                </div>
 
-            <div className="p-3 text-center">
-                <p className="text-m text-white font-semibold">3 M</p>
-                <p className={`text-2xl font-bold ${change90d !== null ? change90d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
-                    {change90d !== null ? `${change90d > 0 ? "+" : ""}${change90d.toFixed(2)} kg` : "-"}
-                </p>
+                <div className="p-3 text-center">
+                    <p className="text-m text-white font-semibold">3 M</p>
+                    <p className={`text-2xl font-bold ${change90d !== null ? change90d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                        {change90d !== null ? `${change90d > 0 ? "+" : ""}${change90d.toFixed(2)} kg` : "-"}
+                    </p>
+                </div>
             </div>
-
         </div>
     )
 }

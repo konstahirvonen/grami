@@ -123,9 +123,9 @@ export default function Home() {
 
   return (
     <div>
-      <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col">
+      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col">
 
-        <div className="relative grid grid-cols-4 gap-4 mb-4 bg-[#2f2f2f] border-1 border-[#404040] rounded-xl">
+        <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 bg-[#2f2f2f] border-1 border-[#404040] rounded-xl">
           <div className="p-4 text-center">
             <p className="text-m text-white font-semibold">Kalorit</p>
             <p className="text-2xl font-bold text-white">0</p>
@@ -161,7 +161,7 @@ export default function Home() {
           
         </div>
 
-        <div className="flex gap-4 items-stretch">
+        <div className="flex flex-col md:flex-row gap-4 items-stretch">
           <div className="border-1 border-[#404040] bg-[#2f2f2f] p-4 rounded-xl">
               <h2 className="font-semibold mb-2 text-white text-center">Kehonpaino</h2>
               <div className="flex gap-2">
@@ -206,8 +206,8 @@ export default function Home() {
             {user && <WeightChart userId={user.id} weightData={weightData} />}
           </div>
 
-          <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl flex">
-            {user && <WeightStats userId="user_id" weightData={weightData}/>}
+          <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl">
+            {user && <WeightStats userId={user.id} weightData={weightData}/>}
           </div>
 
         </div>
