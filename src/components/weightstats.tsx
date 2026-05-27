@@ -45,10 +45,11 @@ export default function WeightStats({ userId, weightData: initialData}: { userId
         }
     }, [initialData])
 
+    const change1d = getWeightChange(1)
     const change7d = getWeightChange(7)
     const change30d = getWeightChange(30)
-    const change180d = getWeightChange(180)
-    const change365d = getWeightChange(365)
+    const change90d = getWeightChange(90)
+    
 
     useEffect(() => {
         const start = new Date()
@@ -65,31 +66,31 @@ export default function WeightStats({ userId, weightData: initialData}: { userId
 
             <h2 className="p-4 text-center font-semibold text-m">Painon muutos</h2>
 
-            <div className="p-4 text-center">
+            <div className="p-3 text-center">
+                <p className="text-m text-white font-semibold">1 D</p>
+                <p className={`text-2xl font-bold ${change1d !== null ? change1d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                    {change1d !== null ? `${change1d > 0 ? "+" : ""}${change1d.toFixed(2)} kg` : "-"}
+                </p>
+            </div>
+
+            <div className="p-3 text-center">
                 <p className="text-m text-white font-semibold">7 D</p>
                 <p className={`text-2xl font-bold ${change7d !== null ? change7d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
                     {change7d !== null ? `${change7d > 0 ? "+" : ""}${change7d.toFixed(2)} kg` : "-"}
                 </p>
             </div>
 
-            <div className="p-4 text-center">
-                <p className="text-m text-white font-semibold">30 D</p>
+            <div className="p-3 text-center">
+                <p className="text-m text-white font-semibold">1 </p>
                 <p className={`text-2xl font-bold ${change30d !== null ? change30d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
                     {change30d !== null ? `${change30d > 0 ? "+" : ""}${change30d.toFixed(2)} kg` : "-"}
                 </p>
             </div>
 
-            <div className="p-4 text-center">
-                <p className="text-m text-white font-semibold">180 D</p>
-                <p className={`text-2xl font-bold ${change180d !== null ? change180d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
-                    {change180d !== null ? `${change180d > 0 ? "+" : ""}${change180d.toFixed(2)} kg` : "-"}
-                </p>
-            </div>
-
-            <div className="p-4 text-center">
-                <p className="text-m text-white font-semibold">365 D</p>
-                <p className={`text-2xl font-bold ${change365d !== null ? change365d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
-                    {change365d !== null ? `${change365d > 0 ? "+" : ""}${change365d.toFixed(2)} kg` : "-"}
+            <div className="p-3 text-center">
+                <p className="text-m text-white font-semibold">3 M</p>
+                <p className={`text-2xl font-bold ${change90d !== null ? change90d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
+                    {change90d !== null ? `${change90d > 0 ? "+" : ""}${change90d.toFixed(2)} kg` : "-"}
                 </p>
             </div>
 
