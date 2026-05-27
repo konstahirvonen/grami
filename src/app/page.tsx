@@ -123,7 +123,7 @@ export default function Home() {
 
   return (
     <div>
-      <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col">
+      <div className="max-w-6xl mx-auto px-4 py-18 flex flex-col">
 
         <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 bg-[#2f2f2f] border-1 border-[#404040] rounded-xl">
           <div className="p-4 text-center">
