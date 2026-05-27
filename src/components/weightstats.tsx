@@ -43,7 +43,7 @@ export default function WeightStats({ userId, weightData: initialData, chartRang
         chartRange === "1y" ? getWeightChange(365) :
         chartRange === "6m" ? getWeightChange(180) :
         getWeightChange(90)
-    const lastLabel = ["max", "ytd"].includes(chartRange) ? "Max" : chartRange === "1y" ? "1 Y" : chartRange === "6m" ? "6 M" : "3 M"
+    const lastLabel = chartRange === "max" ? "Max" : chartRange === "ytd" ? "YTD" : chartRange === "1y" ? "1 Y" : chartRange === "6m" ? "6 M" : "3 M"
 
     return (
         <div>

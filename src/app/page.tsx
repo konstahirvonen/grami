@@ -124,7 +124,7 @@ export default function Home() {
 
   return (
     <div>
-      <div className="max-w-6xl mx-auto px-4 py-18 flex flex-col">
+      <div className="max-w-6xl mx-auto px-4 flex flex-col">
 
         <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 bg-[#2f2f2f] border-1 border-[#404040] rounded-xl">
           <div className="p-4 text-center">
@@ -171,7 +171,7 @@ export default function Home() {
                   placeholder="kg"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
-                  className="border border-[#404040] rounded-xl px-3 py-2 w-24 text-white"
+                  className="border border-[#404040] rounded-xl px-3 py-2 text-white w-full md:w-24"
                 />
                 <button onClick={handleAddWeight} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
                   Lisää
