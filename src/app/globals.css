@@ -36,6 +36,15 @@ body {
   box-shadow: none !important;
 }
 
-.rdp-today.rdp-selected .rdp-day_button {
-    color: black !important;
+.weight-table::-webkit-scrollbar {
+    width: 4px;
+}
+
+.weight-table::-webkit-scrollbar-track {
+    background: #2f2f2f;
+}
+
+.weight-table::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 4px;
 }

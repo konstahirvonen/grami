@@ -182,14 +182,27 @@ export default function Home() {
                         {message}
                     </div>
                 )}
-              <div className="h-64 overflow-y-auto mt-4">
-                <table className="table-auto w-full border-separate border-spacing-0">
-                  <thead className="sticky top-0 bg-[#212121]">
+              
+              <div className="mt-4">
+                <table className="w-full">
+                  <colgroup>
+                    <col className="w-1/2"/>
+                    <col className="w-1/2"/>
+                  </colgroup>
+                  <thead className="border border-[#404040] bg-[#212121]">
                     <tr>
-                      <th className="border border-[#404040]">PVM</th>
-                      <th className="border border-[#404040]">Paino</th>
+                      <th>PVM</th>
+                      <th>Paino</th>
                     </tr>
                   </thead>
+                </table>
+              </div>
+              <div className="h-64 overflow-y-auto weight-table -mr-1">
+                <table className="w-full border-separate border-spacing-0">
+                  <colgroup>
+                    <col className="w-1/2"/>
+                    <col className="w-1/2"/>
+                  </colgroup>
                   <tbody className="text-right">
                       {weightData.map((row) => (
                         <tr key={row.id ?? row.date}>

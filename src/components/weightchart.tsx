@@ -97,7 +97,7 @@ export default function WeightChart({ userId, weightData: initialData, range, se
                     <Line dataKey="weight_kg" stroke="#10b981" strokeWidth={2} dot={false}  activeDot={{ stroke: "#10b981"}}/>
                 </LineChart>
             </ResponsiveContainer>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
                 <button onClick={() => setRange("7d")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "7d" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>7D</button>
                 <button onClick={() => setRange("1m")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "1m" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>1M</button>
                 <button onClick={() => setRange("3m")} className={`text-white font-semibold rounded-xl px-2 py-1 cursor-pointer ${range === "3m" ? "bg-[#10b981] hover:bg-[#0d9166]" : "hover:bg-neutral-900"}`}>3M</button>
