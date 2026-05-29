@@ -6,8 +6,9 @@ import { useEffect, useState } from "react"
 export default function Meals({ userId } : { userId: string }) {
     const [newMealOpen, setNewMealOpen] = useState(false)
     const [items, setItems] = useState([{ food: "", grams: ""}])
-    const [meals, setMeals] = useState<any>(null)
+    const [meals, setMeals] = useState<string[]>([])
     const [meal, setMeal] = useState("")
+    const [updateOpen, setUpdateOpen] = useState(false)
 
     const addItem = () => {
         setItems([...items, { food: "", grams: "" }])
@@ -17,18 +18,28 @@ export default function Meals({ userId } : { userId: string }) {
         setItems(items.filter((_, i) => i !== index))
     }
 
-    useEffect(() => {
+    
+    const fetchMeals = async () => {
         if (!userId) return
 
-        supabase
+        const { data, error } = await supabase
             .from("meal_entries")
             .select("*")
             .eq("user_id", userId)
-            .then(({ data }) => {
-                if (data) setMeals(data)
-            })
+    
+        if (error) {
+            console.log(error.message)
+        }
             
+        if (data) {
+            setMeals(data)
+        }
+    }
+
+    useEffect(() => {
+        fetchMeals()
     }, [])
+    
 
     const handleMeals = async () => {
         
@@ -50,9 +61,7 @@ export default function Meals({ userId } : { userId: string }) {
                 return false
             }
 
-            if (meals) {
-
-            }
+            await fetchMeals()
             return true
         } catch (err) {
             console.log(err)
@@ -67,6 +76,47 @@ export default function Meals({ userId } : { userId: string }) {
         setNewMealOpen(false)
     }
     
+    const removeMeal = async (id: string | number) => {
+
+        const { error } = await supabase
+            .from("meal_entries")
+            .delete()
+            .eq("id", id)
+
+        if (error) {
+            console.log(error.message)
+            return
+        }
+        
+        setMeals(meals.filter((m: any) => m.id !== id))
+    }
+
+    const updateMeal = async (id: string | number) => {
+
+        const currentItem = items[0]
+
+        if (!currentItem) return
+
+        const { data, error } = await supabase
+            .from("meal_entries")
+            .update({
+                meal: meal,
+                food: currentItem.food,
+                grams: parseFloat(currentItem.grams) || 0
+            })
+            .eq("id", id)
+            .select()
+
+        if (error) {
+            console.log(error.message)
+            return
+        }
+
+        if (data && data.length > 0) {
+            setMeals(meals.map((m: any) => m.id === id ? data[0] : 0))
+        }
+    }
+
     return (
         <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4">
             <h2 className="font-semibold mb-2 text-center">Ateriat</h2>
@@ -74,22 +124,60 @@ export default function Meals({ userId } : { userId: string }) {
             <div>
                 {meals && meals.length > 0 ? (
                     meals.map((m: any, index: number) => (
-                        <div key={index}>
-                            <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4 mb-4 gap-2 font-semibold">
-                                <h2 className="capitalize text-center">{m.meal}</h2>
-                                <p className="capitalize">{m.food}</p>
-                                <p>Paino: {m.grams} (g)</p>
-                                <p>Kcal: </p>
-                            </div>
-                            <div>
-
+                        <div key={index} className="flex gap-2 flex-col">
+                            <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4 mb-4 font-semibold flex justify-between">
+                                <div>
+                                    <h2 className="capitalize text-center">{m.meal}</h2>
+                                    <p className="capitalize">{m.food}</p>
+                                    <p>Paino: {m.grams} (g)</p>
+                                    <p>Kcal: </p>
+                                </div>
+                                <div className="flex items-center justify-center">
+                                    <button onClick={() => setUpdateOpen(true)}
+                                        className="hover:bg-neutral-900 cursor-pointer rounded-xl p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                                        </svg>
+                                    </button>
+                                    <button onClick={() => {removeMeal(m.id)}} 
+                                        className="hover:bg-neutral-900 cursor-pointer rounded-xl p-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))
                 ) : (
                     <p></p>
+                    
                 )}
             </div>
+
+            {updateOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
+                    <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-96">
+
+                        <div className="flex items-center justify-between">
+                            <h2 className="font-semibold">Päivitä ateriaa</h2>
+                            <button onClick={() => setUpdateOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className="flex items-center justify-center">
+                            <button 
+                                className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
+                                Tallenna
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
             
             <div className="flex items-center justify-center">
               <button onClick={() => setNewMealOpen(true)} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
@@ -165,7 +253,6 @@ export default function Meals({ userId } : { userId: string }) {
                     </div>
                 </div>
             )}
-
         </div>
     )
 }
