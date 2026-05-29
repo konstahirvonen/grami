@@ -1,15 +1,17 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
+import { error } from "console"
 import { useEffect, useState } from "react"
 
 export default function Meals({ userId } : { userId: string }) {
     const [newMealOpen, setNewMealOpen] = useState(false)
     const [items, setItems] = useState([{ food: "", grams: ""}])
-    const [meals, setMeals] = useState<string[]>([])
+    const [meals, setMeals] = useState<any>()
     const [meal, setMeal] = useState("")
     const [updateOpen, setUpdateOpen] = useState(false)
 
+    //TODO:
     const addItem = () => {
         setItems([...items, { food: "", grams: "" }])
     }
@@ -24,7 +26,17 @@ export default function Meals({ userId } : { userId: string }) {
 
         const { data, error } = await supabase
             .from("meal_entries")
-            .select("*")
+            .select(`
+                id,
+                user_id,
+                meal,
+                date,
+                meal_ingredients (
+                    id,
+                    food,
+                    grams
+                    )
+                `)
             .eq("user_id", userId)
     
         if (error) {
@@ -43,32 +55,43 @@ export default function Meals({ userId } : { userId: string }) {
 
     const handleMeals = async () => {
         
-        const insertRows = items.map((item) => ({
-            user_id: userId,
-            meal: meal,
-            food: item.food,
-            grams: parseFloat(item.grams) || 0,
-            date: new Date().toISOString().split("T")[0]
-        }))
+        const { data: data, error: mealError } = await supabase
+            .from("meal_entries")
+            .insert({
+                user_id: userId,
+                meal: meals,
+                date: new Date().toISOString().split("T")[0]
+            })
+            .select("id")
+            .single()
 
-        try {
-            const { data , error } = await supabase
-                .from("meal_entries")
-                .insert(insertRows)
-
-            if (error) {
-                console.log(error.message)
-                return false
-            }
-
-            await fetchMeals()
-            return true
-        } catch (err) {
-            console.log(err)
+        if (mealError) {
+            console.log(mealError.message)
             return false
         }
+
+        const insertedMealId = data.id
+
+        const insertIngredientsRows = items.map((item) => ({
+            meal_id: insertedMealId,
+            food: item.food,
+            grams: parseFloat(item.grams) || 0
+        }))
+
+        const { error : ingredientsError } = await supabase
+            .from("meal_ingredients")
+            .insert(insertIngredientsRows)
+        
+        if (ingredientsError) {
+            console.log(ingredientsError.message)
+            return false
+        }
+
+        await fetchMeals()
+        return true
     }
 
+    //TODO:
     const handleSaveMeals = async () => {
         await handleMeals() 
         setMeal("")
@@ -91,6 +114,7 @@ export default function Meals({ userId } : { userId: string }) {
         setMeals(meals.filter((m: any) => m.id !== id))
     }
 
+    //TODO:
     const updateMeal = async (id: string | number) => {
 
         const currentItem = items[0]
@@ -185,6 +209,7 @@ export default function Meals({ userId } : { userId: string }) {
                 </button>
             </div>
 
+            //TODO:
             {newMealOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
                     <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-96">
