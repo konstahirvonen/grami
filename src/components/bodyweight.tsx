@@ -68,7 +68,7 @@ export default function BodyWeight({ userId } : {userId:string}) {
 
     return (
         <div className="border-1 border-[#404040] bg-[#2f2f2f] p-4 rounded-xl">
-              <h2 className="font-semibold mb-2 text-white text-center">Kehonpaino</h2>
+              <h2 className="font-semibold mb-2 text-center">Kehonpaino</h2>
               <div className="flex gap-2">
                 <input
                   type="number"

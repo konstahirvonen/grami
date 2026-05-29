@@ -87,7 +87,7 @@ export default function HandleGoals({ userId } : {userId:string}) {
           
           {goalsOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
-                  <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-6 flex flex-col gap-4 w-80">
+                  <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-80">
 
                     <div className="flex items-center justify-between">
                       <h2 className="font-semibold">Aseta tavoitteet</h2>
