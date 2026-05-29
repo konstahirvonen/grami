@@ -27,28 +27,28 @@ export default function HandleGoals({ userId } : {userId:string}) {
 
     const handleGoals = async () => {
     
-        const { error } = await supabase
-          .from("goals")
-          .upsert({
-            user_id: userId,
-            calories: parseInt(calories),
-            protein: parseInt(protein),
-            carbs: parseInt(carbs),
-            fat: parseInt(fat)
-          }, { onConflict: "user_id" })
+      const { error } = await supabase
+        .from("goals")
+        .upsert({
+          user_id: userId,
+          calories: parseInt(calories),
+          protein: parseInt(protein),
+          carbs: parseInt(carbs),
+          fat: parseInt(fat)
+        }, { onConflict: "user_id" })
     
-        if (error) {
-          console.log(error.message)
-        } else {
-          console.log("Tavoitteet tallennettu!")
-          setGoals({ calories: parseInt(calories), protein: parseInt(protein), carbs: parseInt(carbs), fat: parseInt(fat) })
-        }
+      if (error) {
+        console.log(error.message)
+      } else {
+        console.log("Tavoitteet tallennettu!")
+        setGoals({ calories: parseInt(calories), protein: parseInt(protein), carbs: parseInt(carbs), fat: parseInt(fat) })
       }
+    }
 
-      const handleSaveGoals= async () => {
-            await handleGoals()
-            setGoalsOpen(false)
-        }
+    const handleSaveGoals = async () => {
+          await handleGoals()
+          setGoalsOpen(false)
+    }
 
     return (
 

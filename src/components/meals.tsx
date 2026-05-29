@@ -1,14 +1,95 @@
 "use client"
 
-import { useState } from "react"
+import { supabase } from "@/lib/supabase"
+import { useEffect, useState } from "react"
 
 export default function Meals({ userId } : { userId: string }) {
     const [newMealOpen, setNewMealOpen] = useState(false)
+    const [items, setItems] = useState([{ food: "", grams: ""}])
+    const [meals, setMeals] = useState<any>(null)
+    const [meal, setMeal] = useState("")
 
+    const addItem = () => {
+        setItems([...items, { food: "", grams: "" }])
+    }
 
+    const removeItem = (index: number) => {
+        setItems(items.filter((_, i) => i !== index))
+    }
+
+    useEffect(() => {
+        if (!userId) return
+
+        supabase
+            .from("meal_entries")
+            .select("*")
+            .eq("user_id", userId)
+            .then(({ data }) => {
+                if (data) setMeals(data)
+            })
+            
+    }, [])
+
+    const handleMeals = async () => {
+        
+        const insertRows = items.map((item) => ({
+            user_id: userId,
+            meal: meal,
+            food: item.food,
+            grams: parseFloat(item.grams) || 0,
+            date: new Date().toISOString().split("T")[0]
+        }))
+
+        try {
+            const { data , error } = await supabase
+                .from("meal_entries")
+                .insert(insertRows)
+
+            if (error) {
+                console.log(error.message)
+                return false
+            }
+
+            if (meals) {
+
+            }
+            return true
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    }
+
+    const handleSaveMeals = async () => {
+        await handleMeals() 
+        setMeal("")
+        setItems([{ food: "", grams: ""}])
+        setNewMealOpen(false)
+    }
+    
     return (
         <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4">
             <h2 className="font-semibold mb-2 text-center">Ateriat</h2>
+
+            <div>
+                {meals && meals.length > 0 ? (
+                    meals.map((m: any, index: number) => (
+                        <div key={index}>
+                            <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4 mb-4 gap-2 font-semibold">
+                                <h2 className="capitalize text-center">{m.meal}</h2>
+                                <p className="capitalize">{m.food}</p>
+                                <p>Paino: {m.grams} (g)</p>
+                                <p>Kcal: </p>
+                            </div>
+                            <div>
+
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p></p>
+                )}
+            </div>
             
             <div className="flex items-center justify-center">
               <button onClick={() => setNewMealOpen(true)} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
@@ -30,27 +111,52 @@ export default function Meals({ userId } : { userId: string }) {
                         </div>
 
                         <input type="text" placeholder="Aterian nimi"
+                            value={meal}
+                            onChange={(e) => {
+                                setMeal(e.target.value)
+                            }}
                             className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                             />
 
-                        <div className="flex items-center justify-between gap-2">
-                            <input type="text" placeholder="Ruoka-aine"
-                                className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 flex-1"
+                        {items.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between gap-2">
+                                <input type="text" placeholder="Ruoka-aine"
+                                    className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 flex-1"
+                                    value={item.food}
+                                    onChange={(e) => {
+                                        const updated = [...items]
+                                        updated[index].food = e.target.value
+                                        setItems(updated)
+                                    }}
                                 />
-
+                            
                             <input type="number" placeholder="g" 
                                 className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-20 text-center"
+                                value={item.grams}
+                                    onChange={(e) => {
+                                        const updated = [...items]
+                                        updated[index].grams = e.target.value
+                                        setItems(updated)
+                                    }}
                                 />
-                        </div>
-                        
+                            <button onClick={() => removeItem(index)}
+                                className="hover:bg-neutral-900 cursor-pointer rounded-xl p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                </svg>
+                            </button>
+
+                            </div>
+                        ))}
+
                         <div className="flex items-center justify-center">
-                            <button className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
+                            <button onClick={addItem} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
                                 +
                             </button>
                         </div>
 
                         <div className="flex items-center justify-center">
-                            <button
+                            <button onClick={handleSaveMeals}
                                 className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
                                 Tallenna
                             </button>
