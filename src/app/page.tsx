@@ -2,6 +2,7 @@
 
 import BodyWeight from "@/components/bodyweight"
 import HandleGoals from "@/components/handlegoals"
+import Meals from "@/components/meals"
 import WeightChart from "@/components/weightchart"
 import WeightStats from "@/components/weightstats"
 import { supabase } from "@/lib/supabase"
@@ -53,8 +54,6 @@ export default function Home() {
 
           <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl p-4 flex-1">
 
-            <h2 className="font-semibold text-center">Painokuvaaja</h2>
-            
             {user && <WeightChart userId={user.id} weightData={weightData} range={chartRange} setRange={setChartRange} />}
 
           </div>
@@ -64,6 +63,12 @@ export default function Home() {
             {user && <WeightStats userId={user.id} weightData={weightData} chartRange={chartRange}/>}
 
           </div>
+
+        </div>
+
+        <div className="mt-4">
+
+          <Meals userId={user.id} />
 
         </div>
 

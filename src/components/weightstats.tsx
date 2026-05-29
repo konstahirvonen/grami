@@ -46,11 +46,11 @@ export default function WeightStats({ userId, weightData: initialData, chartRang
     const lastLabel = chartRange === "max" ? "Max" : chartRange === "ytd" ? "YTD" : chartRange === "1y" ? "1 Y" : chartRange === "6m" ? "6 M" : "3 M"
 
     return (
-        <div>
+        <div className="flex flex-col h-full">
 
             <h2 className="p-4 text-center font-semibold text-m">Painon muutos</h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-1">
+            <div className="grid grid-cols-2 md:grid-cols-1 flex-1 content-between">
                 <div className="p-3 text-center">
                     <p className="text-m text-white font-semibold">1 D</p>
                     <p className={`text-2xl font-bold ${change1d !== null ? change1d < 0 ? "text-red-500" : "text-[#10b981]" : ""}`}>
