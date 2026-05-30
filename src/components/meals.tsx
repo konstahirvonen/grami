@@ -8,9 +8,7 @@ export default function Meals({ userId } : { userId: string }) {
     const [items, setItems] = useState([{ food: "", grams: ""}])
     const [meals, setMeals] = useState<any[]>([])
     const [meal, setMeal] = useState("")
-    const [updateOpen, setUpdateOpen] = useState(false)
 
-    //TODO:
     const addItem = () => {
         setItems([...items, { food: "", grams: "" }])
     }
@@ -115,33 +113,6 @@ export default function Meals({ userId } : { userId: string }) {
         setMeals(meals.filter((m: any) => m.id !== id))
     }
 
-    //TODO:
-    const updateMeal = async (id: string | number) => {
-
-        const currentItem = items[0]
-
-        if (!currentItem) return
-
-        const { data, error } = await supabase
-            .from("meal_entries")
-            .update({
-                meal: meal,
-                food: currentItem.food,
-                grams: parseFloat(currentItem.grams) || 0
-            })
-            .eq("id", id)
-            .select()
-
-        if (error) {
-            console.log(error.message)
-            return
-        }
-
-        if (data && data.length > 0) {
-            setMeals(meals.map((m: any) => m.id === id ? data[0] : 0))
-        }
-    }
-
     return (
         <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4">
             <h2 className="font-semibold mb-2 text-center">Ateriat</h2>
@@ -152,11 +123,12 @@ export default function Meals({ userId } : { userId: string }) {
                         <div key={m.id} className="flex gap-2 flex-col">
                             <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4 mb-4 flex items-center justify-between">
                                 
-                                    <div className="flex justify-between gap-4 flex-wrap">
+                                    <div className="flex justify-between gap-4">
                                         <div className="flex items-end flex-col justify-center">
                                             <p className="font-semibold">{m.meal}</p>
                                             <p>{new Date(m.time).toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit"})}</p>
                                         </div>
+                                        <div className="flex flex-wrap gap-2">
                                         {m.meal_ingredients && m.meal_ingredients.map((ing: any) => (
                                             <div key={ing.id} className="border-1 border-[#404040] rounded-xl p-2 font-semibold">
                                                 <p className="capitalize">{ing.food}</p>
@@ -164,14 +136,9 @@ export default function Meals({ userId } : { userId: string }) {
                                                 <p>Kcal: </p>
                                             </div>
                                         ))}
+                                        </div>
                                     </div>
                                 <div className="flex items-center justify-center">
-                                    <button onClick={() => setUpdateOpen(true)}
-                                        className="hover:bg-neutral-900 cursor-pointer rounded-xl p-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-                                        </svg>
-                                    </button>
                                     <button onClick={() => {removeMeal(m.id)}} 
                                         className="hover:bg-neutral-900 cursor-pointer rounded-xl p-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
@@ -187,30 +154,6 @@ export default function Meals({ userId } : { userId: string }) {
                     
                 )}
             </div>
-
-            {updateOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
-                    <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-96">
-
-                        <div className="flex items-center justify-between">
-                            <h2 className="font-semibold">Päivitä ateriaa</h2>
-                            <button onClick={() => setUpdateOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div className="flex items-center justify-center">
-                            <button 
-                                className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                                Tallenna
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-            )}
             
             <div className="flex items-center justify-center">
               <button onClick={() => setNewMealOpen(true)} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
@@ -261,6 +204,7 @@ export default function Meals({ userId } : { userId: string }) {
                                         setItems(updated)
                                     }}
                                 />
+
                             <button onClick={() => removeItem(index)}
                                 className="hover:bg-neutral-900 cursor-pointer rounded-xl p-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
