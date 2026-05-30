@@ -1,13 +1,12 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
-import { error } from "console"
 import { useEffect, useState } from "react"
 
 export default function Meals({ userId } : { userId: string }) {
     const [newMealOpen, setNewMealOpen] = useState(false)
     const [items, setItems] = useState([{ food: "", grams: ""}])
-    const [meals, setMeals] = useState<any>()
+    const [meals, setMeals] = useState<any[]>([])
     const [meal, setMeal] = useState("")
     const [updateOpen, setUpdateOpen] = useState(false)
 
@@ -30,7 +29,7 @@ export default function Meals({ userId } : { userId: string }) {
                 id,
                 user_id,
                 meal,
-                date,
+                time,
                 meal_ingredients (
                     id,
                     food,
@@ -54,13 +53,16 @@ export default function Meals({ userId } : { userId: string }) {
     
 
     const handleMeals = async () => {
+        const now = new Date()
+        const offset = now.getTimezoneOffset() * 60000
+        const localTime = new Date(now.getTime() - offset)
         
         const { data: data, error: mealError } = await supabase
             .from("meal_entries")
             .insert({
                 user_id: userId,
-                meal: meals,
-                date: new Date().toISOString().split("T")[0]
+                meal: meal,
+                time: localTime.toISOString()
             })
             .select("id")
             .single()
@@ -91,7 +93,6 @@ export default function Meals({ userId } : { userId: string }) {
         return true
     }
 
-    //TODO:
     const handleSaveMeals = async () => {
         await handleMeals() 
         setMeal("")
@@ -148,14 +149,22 @@ export default function Meals({ userId } : { userId: string }) {
             <div>
                 {meals && meals.length > 0 ? (
                     meals.map((m: any, index: number) => (
-                        <div key={index} className="flex gap-2 flex-col">
-                            <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4 mb-4 font-semibold flex justify-between">
-                                <div>
-                                    <h2 className="capitalize text-center">{m.meal}</h2>
-                                    <p className="capitalize">{m.food}</p>
-                                    <p>Paino: {m.grams} (g)</p>
-                                    <p>Kcal: </p>
-                                </div>
+                        <div key={m.id} className="flex gap-2 flex-col">
+                            <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4 mb-4 flex items-center justify-between">
+                                
+                                    <div className="flex justify-between gap-4 flex-wrap">
+                                        <div className="flex items-end flex-col justify-center">
+                                            <p className="font-semibold">{m.meal}</p>
+                                            <p>{new Date(m.time).toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit"})}</p>
+                                        </div>
+                                        {m.meal_ingredients && m.meal_ingredients.map((ing: any) => (
+                                            <div key={ing.id} className="border-1 border-[#404040] rounded-xl p-2 font-semibold">
+                                                <p className="capitalize">{ing.food}</p>
+                                                <p>Paino: {ing.grams} (g)</p>
+                                                <p>Kcal: </p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 <div className="flex items-center justify-center">
                                     <button onClick={() => setUpdateOpen(true)}
                                         className="hover:bg-neutral-900 cursor-pointer rounded-xl p-1">
@@ -209,7 +218,7 @@ export default function Meals({ userId } : { userId: string }) {
                 </button>
             </div>
 
-            //TODO:
+            
             {newMealOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
                     <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-96">
