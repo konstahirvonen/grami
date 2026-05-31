@@ -169,7 +169,6 @@ export default function Home({ userId } : { userId: string }) {
           fetchTotals={fetchTotals}/>
 
         </div>
-
       </div>
     </div>
   )
