@@ -21,6 +21,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     const [meals, setMeals] = useState<any[]>([])
     const [meal, setMeal] = useState("")
     const [suggestions, setSuggestions] = useState<any[]>([])
+    const [activeIndex, setActiveIndex] = useState<number | null>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -245,11 +246,12 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                             const updated = [...items]
                                             updated[index].food = e.target.value
                                             setItems(updated)
+                                            setActiveIndex(index)
                                             searchFoods(e.target.value)
                                         }}
                                     />
 
-                                    {suggestions.length > 0 && (
+                                    {activeIndex === index && suggestions.length > 0 && (
                                         <div className="absolute z-10 w-full bg-[#212121] border-1 border-[#404040] rounded-xl mt-1">
                                             {suggestions.map((s) => (
                                                 <div key={s.id}
