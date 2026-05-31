@@ -38,16 +38,7 @@ export default function NavBar() {
                         </button>
                     </>
                 ) : (
-                <div className="fixed top-4 right-4 flex flex-row gap-2">
-                    <>
-                        <Link href="/login" className="bg-[#303030] border-1 border-[#404040] text-white font-semibold rounded-xl px-4 py-2 cursor-pointer hover:bg-neutral-900">
-                            Kirjaudu
-                        </Link>
-                        <Link href="/signup" className="bg-[#303030] border-1 border-[#404040] text-white font-semibold rounded-xl px-4 py-2 cursor-pointer hover:bg-neutral-900">
-                            Rekisteröidy
-                        </Link>
-                    </>
-                </div>
+                <p></p>
                 )}
             </div>
         </>

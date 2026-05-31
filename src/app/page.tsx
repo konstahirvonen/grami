@@ -123,8 +123,6 @@ export default function Home({ userId } : { userId: string }) {
   return (
     <div>
       <div className="max-w-6xl mx-auto flex flex-col">
-        
-        <h2 className="text-center font-bold mb-4">Work in Progress...</h2>
 
         <HandleGoals
           userId={user.id}

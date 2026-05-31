@@ -39,6 +39,8 @@ export default function LoginPage() {
             <div className="flex flex-col gap-4 w-full max-w-sm p-8">
                 <h1 className="text-2xl font-bold text-center">Grami</h1>
 
+                <h1 className="text-center font-bold mb-4">Work in Progress...</h1>
+
                 <input
                     type="email"
                     placeholder="Sähköposti"
