@@ -1,7 +1,8 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
-import { use, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import AddProduct from "./addproduct"
 
 export default function Meals({ userId, totalCalories, setTotalCalories, totalProtein, setTotalProtein, totalCarbs, setTotalCarbs, totalFat, setTotalFat, fetchTotals } : {
     userId: string,
@@ -13,7 +14,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     setTotalCarbs: React.Dispatch<React.SetStateAction<number>>,
     totalFat: number,
     setTotalFat: React.Dispatch<React.SetStateAction<number>>,
-    fetchTotals: (uid: string) => Promise<void>
+    fetchTotals: (uid: string) => Promise<void>,
         }) {
 
     const [newMealOpen, setNewMealOpen] = useState(false)
@@ -23,11 +24,13 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     const [suggestions, setSuggestions] = useState<any[]>([])
     const [activeIndex, setActiveIndex] = useState<number | null>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
+    const [addProductsOpen, setAddProductsOpen] = useState(false)
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
                 setSuggestions([])
+                setActiveIndex(null)
             }
         }
         document.addEventListener("mousedown", handleClickOutside)
@@ -240,8 +243,9 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                             <div key={index} className="flex items-center justify-between gap-2">
                                 <div ref={dropdownRef} className="relative flex-1">
                                     <input type="text" placeholder="Ruoka-aine"
-                                        className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 flex-1"
+                                        className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-full"
                                         value={item.food}
+                                        onFocus={() => setActiveIndex(index)}
                                         onChange={(e) => {
                                             const updated = [...items]
                                             updated[index].food = e.target.value
@@ -251,11 +255,11 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                         }}
                                     />
 
-                                    {activeIndex === index && suggestions.length > 0 && (
+                                    {activeIndex === index && (
                                         <div className="absolute z-10 w-full bg-[#212121] border-1 border-[#404040] rounded-xl mt-1">
                                             {suggestions.map((s) => (
                                                 <div key={s.id}
-                                                    onClick={() => {
+                                                    onMouseDown={() => {
                                                         const updated = [...items]
                                                         updated[index].food = s.name
                                                         updated[index].productId = s.id
@@ -266,6 +270,10 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                                     {s.name + " " + s.brand}
                                                 </div>
                                             ))}
+                                            <div onClick={() => setAddProductsOpen(true)}
+                                                className="px-3 py-2 hover:bg-[#303030] cursor-pointer rounded-xl border-t border-[#404040]">
+                                                + Lisää uusi tuote
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -289,6 +297,10 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
 
                             </div>
                         ))}
+
+                        {addProductsOpen && (
+                                        <AddProduct addProductsOpen={addProductsOpen} setAddProductsOpen={setAddProductsOpen} />
+                                    )}
 
                         <div className="flex items-center justify-center">
                             <button onClick={addItem} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
