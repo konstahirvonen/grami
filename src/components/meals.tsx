@@ -1,9 +1,21 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
-import { useEffect, useRef, useState } from "react"
+import { use, useEffect, useRef, useState } from "react"
 
-export default function Meals({ userId } : { userId: string }) {
+export default function Meals({ userId, totalCalories, setTotalCalories, totalProtein, setTotalProtein, totalCarbs, setTotalCarbs, totalFat, setTotalFat, fetchTotals } : {
+    userId: string,
+    totalCalories: number,
+    setTotalCalories: React.Dispatch<React.SetStateAction<number>>,
+    totalProtein: number,
+    setTotalProtein: React.Dispatch<React.SetStateAction<number>>,
+    totalCarbs: number,
+    setTotalCarbs: React.Dispatch<React.SetStateAction<number>>,
+    totalFat: number,
+    setTotalFat: React.Dispatch<React.SetStateAction<number>>,
+    fetchTotals: (uid: string) => Promise<void>
+        }) {
+
     const [newMealOpen, setNewMealOpen] = useState(false)
     const [items, setItems] = useState([{ food: "", grams: "", productId: null as number | null }])
     const [meals, setMeals] = useState<any[]>([])
@@ -116,6 +128,8 @@ export default function Meals({ userId } : { userId: string }) {
         setMeal("")
         setItems([{ food: "", grams: "", productId: null as number | null }])
         setNewMealOpen(false)
+
+        await fetchTotals(userId)
     }
     
     const removeMeal = async (id: string | number) => {
@@ -131,6 +145,7 @@ export default function Meals({ userId } : { userId: string }) {
         }
         
         setMeals(meals.filter((m: any) => m.id !== id))
+        await fetchTotals(userId)
     }
 
     const searchFoods = async (query: string) => {
