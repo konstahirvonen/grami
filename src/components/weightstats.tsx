@@ -1,4 +1,3 @@
-import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
 
 export default function WeightStats({ userId, weightData: initialData, chartRange}: { userId: string, weightData: any[], chartRange: string}) {

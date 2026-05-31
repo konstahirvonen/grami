@@ -4,10 +4,16 @@ import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
 
 
-export default function BodyWeight({ userId } : {userId:string}) {
+export default function BodyWeight({ userId, weightData: initialData, setWeightData } : {
+  userId:string,
+  weightData: any[],
+  setWeightData: React.Dispatch<React.SetStateAction<any[]>>
+  })
+  
+  {
     const [weight, setWeight] = useState("")
     const [message, setMessage] = useState("")
-    const [weightData, setWeightData] = useState<any[]>([])
+    const weightData = initialData
 
     const showMessage = (text: string) => {
         setMessage(text)
@@ -58,7 +64,7 @@ export default function BodyWeight({ userId } : {userId:string}) {
           console.log(error.message)
         } else {
           console.log("Paino tallennettu!")
-          setWeightData((prev) =>
+          setWeightData((prev: any[]) =>
             [...prev, { weight_kg: parseFloat(weight), date: today}]
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           )

@@ -50,7 +50,7 @@ export default function Home() {
 
         <div className="flex flex-col md:flex-row gap-4 items-stretch">
 
-          <BodyWeight userId={user.id}/>
+          <BodyWeight userId={user.id} weightData={weightData} setWeightData={setWeightData} />
 
           <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl p-4 flex-1">
 

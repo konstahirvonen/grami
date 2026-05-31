@@ -1,16 +1,28 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export default function Meals({ userId } : { userId: string }) {
     const [newMealOpen, setNewMealOpen] = useState(false)
-    const [items, setItems] = useState([{ food: "", grams: ""}])
+    const [items, setItems] = useState([{ food: "", grams: "", productId: null as number | null }])
     const [meals, setMeals] = useState<any[]>([])
     const [meal, setMeal] = useState("")
+    const [suggestions, setSuggestions] = useState<any[]>([])
+    const dropdownRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setSuggestions([])
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
 
     const addItem = () => {
-        setItems([...items, { food: "", grams: "" }])
+        setItems([...items, { food: "", grams: "", productId: null as number | null }])
     }
 
     const removeItem = (index: number) => {
@@ -30,8 +42,16 @@ export default function Meals({ userId } : { userId: string }) {
                 time,
                 meal_ingredients (
                     id,
-                    food,
-                    grams
+                    product_id,
+                    grams,
+                    products (
+                        name,
+                        brand,
+                        kcal,
+                        protein,
+                        carbs,
+                        fat
+                        )
                     )
                 `)
             .eq("user_id", userId)
@@ -74,7 +94,7 @@ export default function Meals({ userId } : { userId: string }) {
 
         const insertIngredientsRows = items.map((item) => ({
             meal_id: insertedMealId,
-            food: item.food,
+            product_id: item.productId,
             grams: parseFloat(item.grams) || 0
         }))
 
@@ -94,7 +114,7 @@ export default function Meals({ userId } : { userId: string }) {
     const handleSaveMeals = async () => {
         await handleMeals() 
         setMeal("")
-        setItems([{ food: "", grams: ""}])
+        setItems([{ food: "", grams: "", productId: null as number | null }])
         setNewMealOpen(false)
     }
     
@@ -112,6 +132,23 @@ export default function Meals({ userId } : { userId: string }) {
         
         setMeals(meals.filter((m: any) => m.id !== id))
     }
+
+    const searchFoods = async (query: string) => {
+        if (query.length < 2) {
+            setSuggestions([])
+            return
+        }
+
+        const { data, error } = await supabase
+            .from("products")
+            .select("*")
+            .ilike("name", `%${query}%`)
+            .limit(10)
+
+        if (data) setSuggestions(data)
+    }
+
+
 
     return (
         <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4">
@@ -131,9 +168,9 @@ export default function Meals({ userId } : { userId: string }) {
                                         <div className="flex flex-wrap gap-2">
                                         {m.meal_ingredients && m.meal_ingredients.map((ing: any) => (
                                             <div key={ing.id} className="border-1 border-[#404040] rounded-xl p-2 font-semibold">
-                                                <p className="capitalize">{ing.food}</p>
+                                                <p className="capitalize">{ing.products?.name}</p>
                                                 <p>Paino: {ing.grams} (g)</p>
-                                                <p>Kcal: </p>
+                                                <p>Kcal: {(ing.grams * ing.products?.kcal / 100).toFixed(1)}</p>
                                             </div>
                                         ))}
                                         </div>
@@ -185,15 +222,36 @@ export default function Meals({ userId } : { userId: string }) {
 
                         {items.map((item, index) => (
                             <div key={index} className="flex items-center justify-between gap-2">
-                                <input type="text" placeholder="Ruoka-aine"
-                                    className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 flex-1"
-                                    value={item.food}
-                                    onChange={(e) => {
-                                        const updated = [...items]
-                                        updated[index].food = e.target.value
-                                        setItems(updated)
-                                    }}
-                                />
+                                <div ref={dropdownRef} className="relative flex-1">
+                                    <input type="text" placeholder="Ruoka-aine"
+                                        className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 flex-1"
+                                        value={item.food}
+                                        onChange={(e) => {
+                                            const updated = [...items]
+                                            updated[index].food = e.target.value
+                                            setItems(updated)
+                                            searchFoods(e.target.value)
+                                        }}
+                                    />
+
+                                    {suggestions.length > 0 && (
+                                        <div className="absolute z-10 w-full bg-[#212121] border-1 border-[#404040] rounded-xl mt-1">
+                                            {suggestions.map((s) => (
+                                                <div key={s.id}
+                                                    onClick={() => {
+                                                        const updated = [...items]
+                                                        updated[index].food = s.name
+                                                        updated[index].productId = s.id
+                                                        setItems(updated)
+                                                        setSuggestions([])
+                                                    }}
+                                                    className="px-3 py-2 hover:bg-[#303030] cursor-pointer rounded-xl">
+                                                    {s.name + " " + s.brand}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             
                             <input type="number" placeholder="g" 
                                 className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-20 text-center"
