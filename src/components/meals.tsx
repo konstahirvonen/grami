@@ -18,7 +18,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         }) {
 
     const [newMealOpen, setNewMealOpen] = useState(false)
-    const [items, setItems] = useState([{ food: "", grams: "", productId: null as number | null }])
+    const [items, setItems] = useState([{ food: "", grams: "", count: "", productId: null as number | null }])
     const [meals, setMeals] = useState<any[]>([])
     const [meal, setMeal] = useState("")
     const [suggestions, setSuggestions] = useState<any[]>([])
@@ -38,7 +38,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     }, [])
 
     const addItem = () => {
-        setItems([...items, { food: "", grams: "", productId: null as number | null }])
+        setItems([...items, { food: "", grams: "", count: "", productId: null as number | null }])
     }
 
     const removeItem = (index: number) => {
@@ -60,6 +60,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                     id,
                     product_id,
                     grams,
+                    count,
                     products (
                         name,
                         brand,
@@ -111,7 +112,8 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         const insertIngredientsRows = items.map((item) => ({
             meal_id: insertedMealId,
             product_id: item.productId,
-            grams: parseFloat(item.grams) || 0
+            grams: parseFloat(item.grams) || 0,
+            count: parseFloat(item.count) || 0
         }))
 
         const { error : ingredientsError } = await supabase
@@ -130,7 +132,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     const handleSaveMeals = async () => {
         await handleMeals() 
         setMeal("")
-        setItems([{ food: "", grams: "", productId: null as number | null }])
+        setItems([{ food: "", grams: "", count: "", productId: null as number | null }])
         setNewMealOpen(false)
 
         await fetchTotals(userId)
@@ -188,8 +190,8 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                         {m.meal_ingredients && m.meal_ingredients.map((ing: any) => (
                                             <div key={ing.id} className="border-1 border-[#404040] rounded-xl p-2 font-semibold">
                                                 <p className="capitalize">{ing.products?.name}</p>
-                                                <p>Paino: {ing.grams} (g)</p>
-                                                <p>Kcal: {(ing.grams * ing.products?.kcal / 100).toFixed(1)}</p>
+                                                <p>{ing.grams !== null && ing.grams !== 0 ? `${ing.grams}  (g)` : ing.count !== null ? `${ing.count} kpl` : ""}</p>
+                                                <p>Kcal: {ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.kcal / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.kcal}` : ""}</p>
                                             </div>
                                         ))}
                                         </div>
@@ -279,11 +281,21 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                 </div>
                             
                             <input type="number" placeholder="g" 
-                                className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-20 text-center"
+                                className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-15 text-center"
                                 value={item.grams}
                                     onChange={(e) => {
                                         const updated = [...items]
                                         updated[index].grams = e.target.value
+                                        setItems(updated)
+                                    }}
+                                />
+
+                            <input type="number" placeholder="Kpl"
+                                className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-15 text-center"
+                                value={item.count}
+                                    onChange={(e) => {
+                                        const updated = [...items]
+                                        updated[index].count = e.target.value
                                         setItems(updated)
                                     }}
                                 />
