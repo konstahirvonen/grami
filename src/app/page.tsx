@@ -34,6 +34,7 @@ export default function Home({ userId } : { userId: string }) {
                     id,
                     product_id,
                     grams,
+                    count,
                     products (
                         name,
                         brand,
@@ -122,7 +123,7 @@ export default function Home({ userId } : { userId: string }) {
 
   return (
     <div>
-      <div className="max-w-6xl mx-auto flex flex-col">
+      <div className="max-w-6xl mx-auto flex flex-col p-4">
 
         <HandleGoals
           userId={user.id}
@@ -134,7 +135,8 @@ export default function Home({ userId } : { userId: string }) {
           setTotalCarbs={setTotalCarbs}
           totalFat={totalFat}
           setTotalFat={setTotalFat}
-          fetchTotals={fetchTotals}/>
+          fetchTotals={fetchTotals}
+          />
 
         <div className="flex flex-col md:flex-row gap-4 items-stretch">
 
@@ -158,15 +160,16 @@ export default function Home({ userId } : { userId: string }) {
 
           <Meals
             userId={user.id}
-          totalCalories={totalCalories}
-          setTotalCalories={setTotalCalories}
-          totalProtein={totalProtein}
-          setTotalProtein={setTotalProtein}
-          totalCarbs={totalCarbs}
-          setTotalCarbs={setTotalCarbs}
-          totalFat={totalFat}
-          setTotalFat={setTotalFat}
-          fetchTotals={fetchTotals}/>
+            totalCalories={totalCalories}
+            setTotalCalories={setTotalCalories}
+            totalProtein={totalProtein}
+            setTotalProtein={setTotalProtein}
+            totalCarbs={totalCarbs}
+            setTotalCarbs={setTotalCarbs}
+            totalFat={totalFat}
+            setTotalFat={setTotalFat}
+            fetchTotals={fetchTotals}
+            />
 
         </div>
       </div>

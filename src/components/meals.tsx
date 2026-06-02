@@ -169,7 +169,49 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         if (data) setSuggestions(data)
     }
 
+    const removeIngredient = async (id: string | number, mealId: string) => {
 
+        const { error } = await supabase
+            .from("meal_ingredients")
+            .delete()
+            .eq("id", id)
+            
+        if (error) {
+            console.log(error.message)
+            return
+        }
+
+        const hasIngredients = await checkIfIsIngredients(mealId)
+
+        if (!hasIngredients) {
+            await removeMeal(mealId)
+        }
+
+        setMeals(meals.filter((m: any) => m.id !== id))
+        await fetchTotals(userId)
+        await fetchMeals()
+    }
+
+    const checkIfIsIngredients = async (mealId: string) => {
+
+        const { data, error } = await supabase
+            .from("meal_entries")
+            .select(`
+                id,
+                meal_ingredients (
+                    meal_id)`
+            )
+            .eq("id", mealId)
+
+        if (error) {
+            console.log(console.error)
+            return
+        }
+        
+        const hasIngredients = (data?.[0]?.meal_ingredients?.length ?? 0) > 0
+
+        return hasIngredients
+    }
 
     return (
         <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4">
@@ -189,9 +231,26 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                         <div className="flex flex-wrap gap-2">
                                         {m.meal_ingredients && m.meal_ingredients.map((ing: any) => (
                                             <div key={ing.id} className="border-1 border-[#404040] rounded-xl p-2 font-semibold">
-                                                <p className="capitalize">{ing.products?.name}</p>
-                                                <p>{ing.grams !== null && ing.grams !== 0 ? `${ing.grams}  (g)` : ing.count !== null ? `${ing.count} kpl` : ""}</p>
+                                                
+                                                <div className="flex gap-2 items-center">
+                                                    <p className="capitalize">{ing.products?.name}</p>
+                                                    <button onClick={() => {removeIngredient(ing.id, m.id)}}  className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+
+                                                <div className="flex gap-2 items-center justify-between mb-1">
+                                                    <input
+                                                        type="number"
+                                                        placeholder={ing.grams !== null && ing.grams !== 0 ? `${ing.grams}  (g)` : ing.count !== null ? `${ing.count} kpl` : ""}
+                                                        className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-25 text-center"
+                                                    />
+                                                </div>
+                                                
                                                 <p>Kcal: {ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.kcal / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.kcal}` : ""}</p>
+
                                             </div>
                                         ))}
                                         </div>
@@ -214,8 +273,8 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             </div>
             
             <div className="flex items-center justify-center">
-              <button onClick={() => setNewMealOpen(true)} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                  Lisää ateria
+                <button onClick={() => setNewMealOpen(true)} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
+                    Lisää ateria
                 </button>
             </div>
 
