@@ -153,7 +153,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             return
         }
         
-        setMeals(meals.filter((m: any) => m.id !== id))
+        setMeals((prevMeals: any) => prevMeals.filter((m: any) => m.id !== id))
         await fetchTotals(userId)
     }
 
@@ -227,11 +227,21 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
 
         if (!hasIngredients) {
             await removeMeal(mealId)
+            return
         }
 
-        setMeals(meals.filter((m: any) => m.id !== id))
+        setMeals((prev: any) => 
+            prev.map((meal: any) => {
+                if (meal.id === mealId) {
+                    return {
+                        ...meal,
+                        meal_ingredients: meal.meal_ingredients.filter((i: any) => i.id !== id)
+                    }
+                }
+                return meal
+            }))
         await fetchTotals(userId)
-        await fetchMeals()
+        
     }
 
     const checkIfIsIngredients = async (mealId: string) => {
