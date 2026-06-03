@@ -18,6 +18,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         }) {
 
     const [newMealOpen, setNewMealOpen] = useState(false)
+    const [newIngredientOpen, setNewIngredientOpen] = useState(false)
     const [items, setItems] = useState([{ food: "", grams: "", count: "", productId: null as number | null }])
     const [meals, setMeals] = useState<any[]>([])
     const [meal, setMeal] = useState("")
@@ -26,6 +27,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     const dropdownRef = useRef<HTMLDivElement>(null)
     const [addProductsOpen, setAddProductsOpen] = useState(false)
     const [updatedGrams, setUpdatedGrams] = useState<{[key: number]: string}>({})
+    const [selectedMealId, setSelectedMealId] = useState<number | null>(null)
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -171,6 +173,29 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         }
     }
 
+    const handleUpdateNewIngredient = async (id: any) => {
+
+        const insertIngredientsRows = items.map((item) => ({
+            meal_id: selectedMealId,
+            product_id: item.productId,
+            grams: parseFloat(item.grams) || 0,
+            count: parseFloat(item.count) || 0
+        }))
+
+        const { error } = await supabase
+            .from("meal_ingredients")
+            .insert(insertIngredientsRows)
+
+        if (error) {
+            console.log(error.message)
+            return
+        }
+        
+        setItems([{ food: "", grams: "", count: "", productId: null as number | null }])
+        await fetchTotals(userId)
+        await fetchMeals()
+    } 
+
     const searchFoods = async (query: string) => {
         if (query.length < 2) {
             setSuggestions([])
@@ -275,9 +300,15 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                                 </div>
                                                 
                                                 <p>Kcal: {ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.kcal / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.kcal}` : ""}</p>
-
+                                                
                                             </div>
+                                            
                                         ))}
+                                            <div className="flex items-center justify-center">
+                                                <button onClick={() => { setSelectedMealId(m.id); setNewIngredientOpen(true) }} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
+                                                    +
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 <div className="flex items-center justify-center">
@@ -306,7 +337,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             
             {newMealOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
-                    <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-96">
+                    <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-full max-w-96 mx-4">
 
                         <div className="flex items-center justify-between">
                             <h2 className="font-semibold">Lisää ateria</h2>
@@ -316,14 +347,6 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                 </svg>
                             </button>
                         </div>
-
-                        <input type="text" placeholder="Aterian nimi"
-                            value={meal}
-                            onChange={(e) => {
-                                setMeal(e.target.value)
-                            }}
-                            className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
-                            />
 
                         {items.map((item, index) => (
                             <div key={index} className="flex items-center justify-between gap-2">
@@ -394,6 +417,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                             </div>
                         ))}
 
+
                         {addProductsOpen && (
                                         <AddProduct addProductsOpen={addProductsOpen} setAddProductsOpen={setAddProductsOpen} />
                                     )}
@@ -411,6 +435,95 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                             </button>
                         </div>
                         
+                    </div>
+                </div>
+            )}
+
+            {newIngredientOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">   
+                    <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-full max-w-96 mx-4">
+                                    
+                        <div className="flex items-center justify-between">
+                            <h2 className="font-semibold">Lisää ruoka-aine</h2>
+                            <button onClick={() => setNewIngredientOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {items.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between gap-2">
+                                <div ref={dropdownRef} className="relative flex-1">
+                                    <input type="text" placeholder="Ruoka-aine"
+                                        className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-full"
+                                        value={item.food}
+                                        onFocus={() => setActiveIndex(index)}
+                                        onChange={(e) => {
+                                            const updated = [...items]
+                                            updated[index].food = e.target.value
+                                            setItems(updated)
+                                            setActiveIndex(index)
+                                            searchFoods(e.target.value)
+                                        }}
+                                    />
+
+                                    {activeIndex === index && (
+                                        <div className="absolute z-10 w-full bg-[#212121] border-1 border-[#404040] rounded-xl mt-1">
+                                            {suggestions.map((s) => (
+                                                <div key={s.id}
+                                                    onMouseDown={() => {
+                                                        const updated = [...items]
+                                                        updated[index].food = s.name
+                                                        updated[index].productId = s.id
+                                                        setItems(updated)
+                                                        setSuggestions([])
+                                                    }}
+                                                    className="px-3 py-2 hover:bg-[#303030] cursor-pointer rounded-xl">
+                                                    {s.name + " " + s.brand}
+                                                </div>
+                                            ))}
+                                            <div onClick={() => setAddProductsOpen(true)}
+                                                className="px-3 py-2 hover:bg-[#303030] cursor-pointer rounded-xl border-t border-[#404040]">
+                                                + Lisää uusi tuote
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <input type="number" placeholder="g"
+                                    className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-15 text-center"
+                                    value={item.grams}
+                                    onChange={(e) => {
+                                        const updated = [...items]
+                                        updated[index].grams = e.target.value
+                                        setItems(updated)
+                                    }}
+                                />
+
+                                <input type="number" placeholder="Kpl"
+                                className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-15 text-center"
+                                value={item.count}
+                                    onChange={(e) => {
+                                        const updated = [...items]
+                                        updated[index].count = e.target.value
+                                        setItems(updated)
+                                    }}
+                                />
+
+                                
+                            </div>
+                        ))}
+                        
+                        <div className="flex items-center justify-center">
+                            <button onClick={() => {handleUpdateNewIngredient(selectedMealId); setNewIngredientOpen(false)}}
+                                className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
+                                Tallenna
+                            </button>
+                            {addProductsOpen && (
+                                        <AddProduct addProductsOpen={addProductsOpen} setAddProductsOpen={setAddProductsOpen} />
+                                    )}
+                        </div>
                     </div>
                 </div>
             )}
