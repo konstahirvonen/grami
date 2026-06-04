@@ -53,41 +53,31 @@ export default function Home({ userId } : { userId: string }) {
         }
 
         if (data) {
+        let totalCalories = 0
+        let totalProtein = 0
+        let totalCarbs = 0
+        let totalFat = 0
 
-          const totalCalories = data.reduce((sum, meal) => {
-            const mealCalories = meal.meal_ingredients.reduce((s: number, ing: any) => {
-              return s + (ing.grams * ing.products?.kcal / 100)
-              }, 0)
-            return sum + mealCalories
-          }, 0)
+        data.forEach((meal) => {
+            meal.meal_ingredients?.forEach((ing: any) => {
+                const product = ing.products
+                if (!product) return
 
-          const totalProtein = data.reduce((sum, meal) => {
-            const mealProtein = meal.meal_ingredients.reduce((s: number, ing: any) => {
-              return s + (ing.grams * ing.products?.protein / 100)
-            }, 0)
-            return sum + mealProtein
-          }, 0)
+                const isCountBased = ing.count && ing.count > 0
+                const multiplier = isCountBased ? ing.count : (ing.grams || 0) / 100
 
-          const totalCarbs = data.reduce((sum, meal) => {
-            const mealCarbs = meal.meal_ingredients.reduce((s: number, ing: any) => {
-              return s + (ing.grams * ing.products?.carbs / 100)
-            }, 0)
-            return sum + mealCarbs
-          }, 0)
+                totalCalories += (product.kcal || 0) * multiplier
+                totalProtein += (product.protein || 0) * multiplier
+                totalCarbs += (product.carbs || 0) * multiplier
+                totalFat += (product.fat || 0) * multiplier
+            })
+        })
 
-          const totalFat = data.reduce((sum, meal) => {
-            const mealFat = meal.meal_ingredients.reduce((s: number, ing: any) => {
-              return s + (ing.grams * ing.products?.fat / 100)
-            }, 0)
-            return sum + mealFat
-          }, 0)
-
-          setTotalCalories(totalCalories)
-          setTotalProtein(totalProtein)
-          setTotalCarbs(totalCarbs)
-          setTotalFat(totalFat)
-          
-        }        
+        setTotalCalories(totalCalories)
+        setTotalProtein(totalProtein)
+        setTotalCarbs(totalCarbs)
+        setTotalFat(totalFat)
+      }    
     }
 
   useEffect(() => {
