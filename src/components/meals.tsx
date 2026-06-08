@@ -22,7 +22,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
 
     const [newMealOpen, setNewMealOpen] = useState(false)
     const [newIngredientOpen, setNewIngredientOpen] = useState(false)
-    const [items, setItems] = useState([{ food: "", grams: "", count: "", productId: null as number | null }])
+    const [items, setItems] = useState([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
     const [meals, setMeals] = useState<any[]>([])
     const [meal, setMeal] = useState("")
     const [suggestions, setSuggestions] = useState<any[]>([])
@@ -44,7 +44,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     }, [])
 
     const addItem = () => {
-        setItems([...items, { food: "", grams: "", count: "", productId: null as number | null }])
+        setItems([...items, { food: "", grams: "", count: "", productId: null as number | null, position: items.length }])
     }
 
     const removeItem = (index: number) => {
@@ -62,6 +62,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                 user_id,
                 meal,
                 time,
+                position,
                 meal_ingredients (
                     id,
                     product_id,
@@ -78,6 +79,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                     )
                 `)
             .eq("user_id", userId)
+            .order("position", { ascending: true })
     
         if (error) {
             console.log(error.message)
@@ -91,19 +93,20 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     useEffect(() => {
         fetchMeals()
     }, [])
-    
 
     const handleMeals = async () => {
         const now = new Date()
         const offset = now.getTimezoneOffset() * 60000
         const localTime = new Date(now.getTime() - offset)
+        const nextPositon = meals ? meals.length : 0
         
         const { data: data, error: mealError } = await supabase
             .from("meal_entries")
             .insert({
                 user_id: userId,
                 meal: meal,
-                time: localTime.toISOString()
+                time: localTime.toISOString(),
+                position: nextPositon
             })
             .select("id")
             .single()
@@ -138,7 +141,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     const handleSaveMeals = async () => {
         await handleMeals() 
         setMeal("")
-        setItems([{ food: "", grams: "", count: "", productId: null as number | null }])
+        setItems([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
         setNewMealOpen(false)
 
         await fetchTotals(userId)
@@ -194,7 +197,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             return
         }
         
-        setItems([{ food: "", grams: "", count: "", productId: null as number | null }])
+        setItems([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
         await fetchTotals(userId)
         await fetchMeals()
     } 
@@ -275,7 +278,22 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             <div>
                 <DragDropProvider
                     onDragEnd={(event) => {
-                        setMeals((prevMeals) => move(prevMeals, event))
+                        const updatedMeals = move(meals, event)
+
+                        setMeals(updatedMeals)
+
+                        if (updatedMeals && updatedMeals.length > 0) {
+                            updatedMeals.forEach(async (meal: any, index: number) => {
+                                const { error } = await supabase
+                                    .from("meal_entries")
+                                    .update({ position: index })
+                                    .eq("id", meal.id)
+
+                                    if (error) {
+                                        console.log(error.message)
+                                    }
+                            })
+                        }
                     }}
                 >
                     
