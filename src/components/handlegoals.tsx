@@ -22,6 +22,12 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
     const [fat, setFat] = useState("")
     const [goalsOpen, setGoalsOpen] = useState(false)
     const [goals, setGoals] = useState<any>(null)
+    const [message, setMessage] = useState("")
+
+    const showMessage = (text: string) => {
+        setMessage(text)
+        setTimeout(() => setMessage(""), 3000)
+    }
 
     useEffect(() => {
         if (!userId) return
@@ -62,12 +68,25 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
     }
 
     const handleSaveDayResults = async () => {
+      const today = new Date().toISOString().split("T")[0]
+
+      const { data: existing } = await supabase
+        .from("day_result")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("date", today)
+        .maybeSingle()
+
+      if (existing) {
+        showMessage("Olet jo tallentanut tämän päivän lopputuloksen")
+        return
+      }
 
       const { error } = await supabase
         .from("day_result")
         .insert({
           user_id: userId,
-          date: new Date().toISOString().split("T")[0],
+          date: today,
           calories: totalCalories,
           protein: totalProtein,
           carbs: totalCarbs,
@@ -77,7 +96,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
         if (error) {
           console.log(error.message)
         } else {
-          console.log("Tulokset tallennettu!")
+          
         }
     }
 
@@ -163,6 +182,12 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
                   </div>
                 </div>
               )}
+
+              {message && (
+                    <div className={"fixed top-4 left-1/2 -translate-x-1/2 text-white bg-red-500 text-center px-4 py-2 rounded-xl shadow-lg"}>
+                        {message}
+                    </div>
+                )}
         </div>
 
     )
