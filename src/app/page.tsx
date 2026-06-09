@@ -19,6 +19,7 @@ export default function Home({ userId } : { userId: string }) {
   const [totalProtein, setTotalProtein] = useState(0)
   const [totalCarbs, setTotalCarbs] = useState(0)
   const [totalFat, setTotalFat] = useState(0)
+  const [oldCaloriesData, setOldCaloriesData] = useState<any[]>([])
 
   const fetchTotals = async (uid: string) => {
         if (!uid) return
@@ -92,9 +93,18 @@ export default function Home({ userId } : { userId: string }) {
             .from("weight")
             .select("*")
             .eq("user_id", user.id)
-            .order("date", { ascending: false})
+            .order("date", { ascending: false })
             .then(({ data }) => {
                 if (data) setWeightData(data)
+            })
+
+          supabase
+            .from("day_result")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("date", { ascending: false })
+            .then(({ data }) => {
+              if (data) setOldCaloriesData(data)
             })
       }
     })
@@ -110,8 +120,6 @@ export default function Home({ userId } : { userId: string }) {
         <div className="w-8 h-8 border-4 border-[#10b981] border-t-transparent rounded-full animate-spin" />
     </div>
   )
-
-
 
   return (
     <div>
@@ -164,6 +172,35 @@ export default function Home({ userId } : { userId: string }) {
             />
 
         </div>
+
+        <div className="mt-4 border-1 border-[#404040] bg-[#2f2f2f] p-4 rounded-xl">
+          <h2 className="font-semibold mb-2 text-center">Historia</h2>
+          <div className="h-auto overflow-y-auto">
+            <table className="w-full border-separate border-spacing-0">
+              <thead className="border border-[#404040] bg-[#212121]">
+                <tr>
+                  <th>PVM</th>
+                  <th>K</th>
+                  <th>P</th>
+                  <th>HH</th>
+                  <th>R</th>
+                </tr>
+              </thead>
+              <tbody className="text-right">
+                  {oldCaloriesData.map((row) => (
+                    <tr key={row.id ?? row.date}>
+                      <td className="border border-[#404040] pr-2">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})}</td>
+                      <td className="border border-[#404040] pr-2">{row.calories}</td>
+                      <td className="border border-[#404040] pr-2">{row.protein}</td>
+                      <td className="border border-[#404040] pr-2">{row.carbs}</td>
+                      <td className="border border-[#404040] pr-2">{row.fat}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
       </div>
     </div>
   )
