@@ -176,24 +176,24 @@ export default function Home({ userId } : { userId: string }) {
         <div className="mt-4 border-1 border-[#404040] bg-[#2f2f2f] p-4 rounded-xl">
           <h2 className="font-semibold mb-2 text-center">Historia</h2>
           <div className="h-auto overflow-y-auto">
-            <table className="w-full border-separate border-spacing-0">
-              <thead className="border border-[#404040] bg-[#212121]">
+            <table className="w-full table-fixed border-separate border-spacing-0">
+              <thead className="bg-[#212121]">
                 <tr>
-                  <th>PVM</th>
-                  <th>K</th>
-                  <th>P</th>
-                  <th>HH</th>
-                  <th>R</th>
+                  <th className="border border-[#404040]">PVM</th>
+                  <th className="border border-[#404040]">K</th>
+                  <th className="border border-[#404040]">P</th>
+                  <th className="border border-[#404040]">HH</th>
+                  <th className="border border-[#404040]">R</th>
                 </tr>
               </thead>
-              <tbody className="text-right">
+              <tbody className="text-center">
                   {oldCaloriesData.map((row) => (
                     <tr key={row.id ?? row.date}>
-                      <td className="border border-[#404040] pr-2">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})}</td>
-                      <td className="border border-[#404040] pr-2">{row.calories}</td>
-                      <td className="border border-[#404040] pr-2">{row.protein}</td>
-                      <td className="border border-[#404040] pr-2">{row.carbs}</td>
-                      <td className="border border-[#404040] pr-2">{row.fat}</td>
+                      <td className="border border-[#404040]">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow", year: "2-digit"})}</td>
+                      <td className="border border-[#404040]">{row.calories}</td>
+                      <td className="border border-[#404040]">{row.protein}</td>
+                      <td className="border border-[#404040]">{row.carbs}</td>
+                      <td className="border border-[#404040]">{row.fat}</td>
                     </tr>
                   ))}
               </tbody>

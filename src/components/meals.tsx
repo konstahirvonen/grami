@@ -211,7 +211,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         const { data, error } = await supabase
             .from("products")
             .select("*")
-            .ilike("name", `%${query}%`)
+            .or(`name.ilike.%${query}%,brand.ilike.%${query}%`)
             .limit(10)
 
         if (data) setSuggestions(data)
