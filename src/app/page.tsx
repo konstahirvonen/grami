@@ -19,7 +19,7 @@ export default function Home({ userId } : { userId: string }) {
   const [totalProtein, setTotalProtein] = useState(0)
   const [totalCarbs, setTotalCarbs] = useState(0)
   const [totalFat, setTotalFat] = useState(0)
-  const [oldCaloriesData, setOldCaloriesData] = useState<any[]>([])
+  const [historyData, setHistoryData] = useState<any[]>([])
 
   const fetchTotals = async (uid: string) => {
         if (!uid) return
@@ -104,7 +104,7 @@ export default function Home({ userId } : { userId: string }) {
             .eq("user_id", user.id)
             .order("date", { ascending: false })
             .then(({ data }) => {
-              if (data) setOldCaloriesData(data)
+              if (data) setHistoryData(data)
             })
       }
     })
@@ -136,6 +136,8 @@ export default function Home({ userId } : { userId: string }) {
           totalFat={totalFat}
           setTotalFat={setTotalFat}
           fetchTotals={fetchTotals}
+          historyData={historyData}
+          setHistoryData={setHistoryData}
           />
 
         <div className="flex flex-col md:flex-row gap-4 items-stretch">
@@ -187,7 +189,7 @@ export default function Home({ userId } : { userId: string }) {
                 </tr>
               </thead>
               <tbody className="text-center">
-                  {oldCaloriesData.map((row) => (
+                  {historyData.map((row) => (
                     <tr key={row.id ?? row.date}>
                       <td className="border border-[#404040]">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow", year: "2-digit"})}</td>
                       <td className="border border-[#404040]">{row.calories}</td>

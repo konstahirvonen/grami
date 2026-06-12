@@ -63,7 +63,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
         if (error) {
           console.log(error.message)
         } else {
-          console.log("Paino tallennettu!")
+          showMessage("Paino tallennettu!")
           setWeightData((prev: any[]) =>
             [...prev, { weight_kg: parseFloat(weight), date: today}]
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -88,7 +88,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
                 </button>
               </div>
               {message && (
-                    <div className={"fixed top-4 left-1/2 -translate-x-1/2 text-white bg-red-500 text-center px-4 py-2 rounded-xl shadow-lg"}>
+                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded-xl shadow-lg ${message.includes("tallennettu") ? "bg-[#10b981]" : "bg-red-500"}`}>
                         {message}
                     </div>
                 )}

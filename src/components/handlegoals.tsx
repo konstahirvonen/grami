@@ -1,9 +1,10 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
+import { error } from "console"
 import { useEffect, useState } from "react"
 
-export default function HandleGoals({ userId, totalCalories, setTotalCalories, totalProtein, setTotalProtein, totalCarbs, setTotalCarbs, totalFat, setTotalFat, fetchTotals } : {
+export default function HandleGoals({ userId, totalCalories, setTotalCalories, totalProtein, setTotalProtein, totalCarbs, setTotalCarbs, totalFat, setTotalFat, fetchTotals, historyData, setHistoryData } : {
   userId: string,
   totalCalories: number,
   setTotalCalories: React.Dispatch<React.SetStateAction<number>>,
@@ -13,7 +14,9 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
   setTotalCarbs: React.Dispatch<React.SetStateAction<number>>,
   totalFat: number,
   setTotalFat: React.Dispatch<React.SetStateAction<number>>,
-  fetchTotals: (uid: string) => Promise<void>
+  fetchTotals: (uid: string) => Promise<void>,
+  historyData: any[],
+  setHistoryData: React.Dispatch<React.SetStateAction<any[]>>
     }) {
 
     const [calories, setCalorie] = useState("")
@@ -95,8 +98,20 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
 
         if (error) {
           console.log(error.message)
+          return
         } else {
+
+          const newResult = {
+            user_id: userId,
+            date: today,
+            calories: Math.round(totalCalories),
+            protein: Math.round(totalProtein),
+            carbs: Math.round(totalCarbs),
+            fat: Math.round(totalFat)
+          }
           
+          showMessage("Tiedot tallennettu!")
+          setHistoryData(prev => [newResult, ...prev])
         }
     }
 
@@ -182,13 +197,11 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
                   </div>
                 </div>
               )}
-
               {message && (
-                    <div className={"fixed top-4 left-1/2 -translate-x-1/2 text-white bg-red-500 text-center px-4 py-2 rounded-xl shadow-lg"}>
+                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded-xl shadow-lg ${message.includes("tallennettu") ? "bg-[#10b981]" : "bg-red-500"}`}>
                         {message}
                     </div>
                 )}
         </div>
-
     )
 }
