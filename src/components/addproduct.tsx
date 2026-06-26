@@ -1,7 +1,7 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
 export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { addProductsOpen: boolean, setAddProductsOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [name, setName] = useState("")
@@ -54,24 +54,27 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         
     }
 
+    const [stream, setStream] = useState<MediaStream | null>(null)
     const videoRef = useRef<HTMLVideoElement>(null)
 
     const openCamera = async (): Promise<void> => {
         try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        setStream(mediaStream)
         setCameraOpen(true)
-        setTimeout(() => {
-            if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-            videoRef.current.play();
-            }
-        }, 0)
         } catch (error) {
             if (error) {
                 console.log("Virhe avatessa kameraa tai kameraa ei löytynyt")
             }
         }
     }
+
+    useEffect(() => {
+        if (cameraOpen && stream && videoRef.current) {
+            videoRef.current.srcObject = stream
+            videoRef.current.play()
+        }
+    }, [cameraOpen, stream])
 
     const takePhoto = (): void => {
         const video = document.getElementById("video") as HTMLVideoElement
