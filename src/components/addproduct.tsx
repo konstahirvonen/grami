@@ -12,7 +12,14 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
     const [fat, setFat] = useState("")
     const [message, setMessage] = useState("")
     const [isError, setIsError] = useState(false)
+    const [imageOpen, setImageOpen] = useState(false)
     const [cameraOpen, setCameraOpen] = useState(false)
+    const [capturedImage, setCapturedImage] = useState<string | null>(null)
+    const [stream, setStream] = useState<MediaStream | null>(null)
+    const [hasCamera, setHasCamera] = useState(true)
+    const videoRef = useRef<HTMLVideoElement>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const [showOptions, setShowOptions] = useState(false)
     
     const showMessage = (text: string, error: boolean = false) => {
         setMessage(text)
@@ -54,18 +61,15 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         
     }
 
-    const [stream, setStream] = useState<MediaStream | null>(null)
-    const videoRef = useRef<HTMLVideoElement>(null)
-
     const openCamera = async (): Promise<void> => {
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
             setStream(mediaStream)
+            setHasCamera(true)
             setCameraOpen(true)
         } catch (error) {
-            if (error) {
-                console.log("Virhe avatessa kameraa tai kameraa ei löytynyt")
-            }
+            setHasCamera(false)
+            setCameraOpen(false)
         }
     }
 
@@ -73,6 +77,15 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         stream?.getTracks().forEach(t => t.stop())
         setStream(null)
         setCameraOpen(false)
+        setCapturedImage(null)
+    }
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = () => setCapturedImage(reader.result as string)
+        reader.readAsDataURL(file)
     }
 
     useEffect(() => {
@@ -81,15 +94,6 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
             videoRef.current.play()
         }
     }, [cameraOpen, stream])
-
-    const takePhoto = (): void => {
-        const video = document.getElementById("video") as HTMLVideoElement
-        const canvas = document.getElementById("photo") as HTMLCanvasElement
-
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        canvas.getContext("2d")?.drawImage(video, 0, 0)
-    }
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
@@ -138,7 +142,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                         Lisää
                     </button>
 
-                    <button onClick={openCamera}
+                    <button onClick={() => setImageOpen(true)}
                         className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl p-2 hover:bg-[#0d9166] cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
@@ -147,29 +151,44 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                     </button>
                 </div>
 
-                {cameraOpen && (
+                {imageOpen && (
                     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-20">
-                        <div className="bg-[#212121] border border-[#404040] rounded-xl p-4 flex flex-col gap-4">
+                        <div className="bg-[#212121] border border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-80 h-auto">
                             <div className="flex items-center justify-between">
                                 <h2 className="font-semibold">Kamera</h2>
-                                <button onClick={closeCamera} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                                <button onClick={() => setImageOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
-                            <video ref={videoRef} autoPlay className="rounded-xl" />
-                            <div className="flex items-center justify-center">
-                                <button onClick={takePhoto}
-                                    className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl p-2 hover:bg-[#0d9166] cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                                    </svg>
-                                </button>
+                            
+                            <div className="flex flex-col items-center gap-4">
+                                {capturedImage ? (
+                                    <img src={capturedImage} alt="Otettu kuva" className="rounded-xl w-full" />
+                                ) : (
+                                    <div className="bg-[#303030] border border-[#404040] rounded-xl w-full aspect-video flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-12 text-neutral-600">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                                        </svg>
+                                    </div>
+                                )}
+                                <div className="flex items-center justify-between gap-4">
+                                    <button onClick={() => fileInputRef.current?.click()}
+                                        className="border border-[#404040] bg-[#303030] rounded-xl px-4 py-2 hover:bg-neutral-900 cursor-pointer">
+                                        Valitse kuva
+                                    </button>
+                                    <button 
+                                        className="bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
+                                        Käytä kuvaa
+                                    </button>
+                                </div>
                             </div>
+
+                            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+
                         </div>
-                        
                     </div>
                 )}
 
