@@ -16,10 +16,9 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
     const [cameraOpen, setCameraOpen] = useState(false)
     const [capturedImage, setCapturedImage] = useState<string | null>(null)
     const [stream, setStream] = useState<MediaStream | null>(null)
-    const [hasCamera, setHasCamera] = useState(true)
     const videoRef = useRef<HTMLVideoElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const [showOptions, setShowOptions] = useState(false)
+
     
     const showMessage = (text: string, error: boolean = false) => {
         setMessage(text)
@@ -61,31 +60,32 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         
     }
 
-    const openCamera = async (): Promise<void> => {
-        try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-            setStream(mediaStream)
-            setHasCamera(true)
-            setCameraOpen(true)
-        } catch (error) {
-            setHasCamera(false)
-            setCameraOpen(false)
-        }
-    }
-
-    const closeCamera = () => {
-        stream?.getTracks().forEach(t => t.stop())
-        setStream(null)
-        setCameraOpen(false)
-        setCapturedImage(null)
-    }
-
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
         const reader = new FileReader()
         reader.onload = () => setCapturedImage(reader.result as string)
         reader.readAsDataURL(file)
+    }
+
+    const analyzeImage = async () => {
+        if (!capturedImage) return
+
+        const base64 = capturedImage.split(",")[1]
+
+        const response = await fetch("/api/analyze-image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64 })
+        })
+
+        const data = await response.json()
+
+        if (data.kcal) setKcal(data.kcal.toString())
+        if (data.protein) setProtein(data.protein.toString())
+        if (data.carbs) setCarbs(data.carbs.toString())
+        if (data.fat) setFat(data.fat.toString())
+        setImageOpen(false)
     }
 
     useEffect(() => {
@@ -179,7 +179,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                                         className="border border-[#404040] bg-[#303030] rounded-xl px-4 py-2 hover:bg-neutral-900 cursor-pointer">
                                         Valitse kuva
                                     </button>
-                                    <button 
+                                    <button onClick={analyzeImage}
                                         className="bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
                                         Käytä kuvaa
                                     </button>

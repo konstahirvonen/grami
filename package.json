@@ -11,10 +11,11 @@
   "dependencies": {
     "@dnd-kit/helpers": "^0.4.0",
     "@dnd-kit/react": "^0.4.0",
+    "@google/genai": "^2.10.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
-    "@vercel/analytics": "^2.0.1",
-    "next": "16.2.6",
+    "@vercel/analytics": "^1.1.4",
+    "next": "^16.2.10",
     "react": "19.2.4",
     "react-day-picker": "^10.0.1",
     "react-dom": "19.2.4",
