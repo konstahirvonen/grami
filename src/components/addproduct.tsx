@@ -18,6 +18,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
     const [stream, setStream] = useState<MediaStream | null>(null)
     const videoRef = useRef<HTMLVideoElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     
     const showMessage = (text: string, error: boolean = false) => {
@@ -27,7 +28,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
     }
 
     const handleAddProduct = async () => {
-
+        setIsLoading(true)
         const { data: existing } = await supabase
             .from("products")
             .select("*")
@@ -57,7 +58,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         } else {
             setAddProductsOpen(false)
         }
-        
+        setIsLoading(false)
     }
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +70,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
     }
 
     const analyzeImage = async () => {
+        setIsLoading(true)
         if (!capturedImage) return
 
         const base64 = capturedImage.split(",")[1]
@@ -86,6 +88,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         if (data.carbs) setCarbs(data.carbs.toString())
         if (data.fat) setFat(data.fat.toString())
         setImageOpen(false)
+        setIsLoading(false)
     }
 
     useEffect(() => {
@@ -137,9 +140,11 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
 
                     <div className="w-10"></div>
 
-                    <button onClick={handleAddProduct}
+                    <button onClick={handleAddProduct} disabled={isLoading}
                         className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                        Lisää
+                        {isLoading ? (
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                        ) : "Lisää"}
                     </button>
 
                     <button onClick={() => setImageOpen(true)}
@@ -179,9 +184,11 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                                         className="border border-[#404040] bg-[#303030] rounded-xl px-4 py-2 hover:bg-neutral-900 cursor-pointer">
                                         Valitse kuva
                                     </button>
-                                    <button onClick={analyzeImage}
+                                    <button onClick={analyzeImage} disabled={isLoading}
                                         className="bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                                        Käytä kuvaa
+                                        {isLoading ? (
+                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                                        ) : "Käytä kuvaa"}
                                     </button>
                                 </div>
                             </div>

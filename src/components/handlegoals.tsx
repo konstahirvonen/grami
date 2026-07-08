@@ -26,6 +26,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
     const [goalsOpen, setGoalsOpen] = useState(false)
     const [goals, setGoals] = useState<any>(null)
     const [message, setMessage] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
 
     const showMessage = (text: string) => {
         setMessage(text)
@@ -71,6 +72,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
     }
 
     const handleSaveDayResults = async () => {
+      setIsLoading(true)
       const today = new Date().toISOString().split("T")[0]
 
       const { data: existing } = await supabase
@@ -82,6 +84,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
 
       if (existing) {
         showMessage("Olet jo tallentanut tämän päivän lopputuloksen")
+        setIsLoading(false)
         return
       }
 
@@ -113,6 +116,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
           showMessage("Tiedot tallennettu!")
           setHistoryData(prev => [newResult, ...prev])
         }
+        setIsLoading(false)
     }
 
     return (
@@ -151,10 +155,12 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
           </div>
 
           <div className="absolute bottom-2 right-2">
-            <button onClick={handleSaveDayResults} className="border-1 border-[#404040] bg-[#10b981] hover:bg-[#0d9166] cursor-pointer rounded-xl p-1">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-              </svg>
+            <button onClick={handleSaveDayResults} className="border-1 border-[#404040] bg-[#10b981] hover:bg-[#0d9166] cursor-pointer rounded-xl p-1 h-10 w-10 flex items-center justify-center">
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                  ) : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                      </svg>}
             </button>
           </div>
           

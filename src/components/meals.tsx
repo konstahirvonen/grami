@@ -31,6 +31,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     const [addProductsOpen, setAddProductsOpen] = useState(false)
     const [updatedGrams, setUpdatedGrams] = useState<{[key: number]: string}>({})
     const [selectedMealId, setSelectedMealId] = useState<number | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -139,11 +140,12 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     }
 
     const handleSaveMeals = async () => {
+        setIsLoading(true)
         await handleMeals() 
         setMeal("")
         setItems([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
         setNewMealOpen(false)
-
+        setIsLoading(false)
         await fetchTotals(userId)
     }
     
@@ -421,9 +423,11 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                         </div>
 
                         <div className="flex items-center justify-center">
-                            <button onClick={handleSaveMeals}
+                            <button onClick={handleSaveMeals} disabled={isLoading}
                                 className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                                Tallenna
+                                {isLoading ? (
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                                ) : "Tallenna"}
                             </button>
                         </div>
                         

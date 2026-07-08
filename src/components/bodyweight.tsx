@@ -14,6 +14,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
     const [weight, setWeight] = useState("")
     const [message, setMessage] = useState("")
     const weightData = initialData
+    const [isLoading, setIsLoading] = useState(false)
 
     const showMessage = (text: string) => {
         setMessage(text)
@@ -37,6 +38,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
     }, [])
 
     const handleAddWeight = async () => {
+        setIsLoading(true)
     
         const today = new Date().toISOString().split("T")[0]
     
@@ -49,6 +51,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
     
         if (existing) {
           showMessage("Olet jo lisännyt painon tänään.")
+          setIsLoading(false)
           return
         }
     
@@ -62,6 +65,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
           
         if (error) {
           console.log(error.message)
+          setIsLoading(false)
         } else {
           showMessage("Paino tallennettu!")
           setWeightData((prev: any[]) =>
@@ -70,6 +74,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
           )
           setWeight("")
         }
+        setIsLoading(false)
       }
 
     return (
@@ -83,8 +88,11 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
                   onChange={(e) => setWeight(e.target.value)}
                   className="border border-[#404040] rounded-xl px-3 py-2 text-white w-full md:w-24"
                 />
-                <button onClick={handleAddWeight} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                  Lisää
+                <button onClick={handleAddWeight} disabled={isLoading}
+                  className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer w-20">
+                  {isLoading ? (
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                        ) : "Lisää"}
                 </button>
               </div>
               {message && (
