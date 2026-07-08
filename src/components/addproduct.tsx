@@ -69,6 +69,42 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         reader.readAsDataURL(file)
     }
 
+    const resizeAndCompressImage = (base64Str: string, maxWidth = 1024, maxHeight = 1024): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = base64Str;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return reject('Canvas context failed');
+
+                ctx.drawImage(img, 0, 0, width, height);
+                
+
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+                resolve(compressedBase64);
+            };
+            img.onerror = (err) => reject(err);
+        });
+    };
+
     const analyzeImage = async () => {
         setIsLoading(true)
         if (!capturedImage) {
@@ -76,27 +112,35 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
             return
         }
 
-        const base64 = capturedImage.split(",")[1]
+        try {
+            const compressedImage = await resizeAndCompressImage(capturedImage);
+            
+            const base64 = compressedImage.split(",")[1];
 
-        const response = await fetch("/api/analyze-image", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: base64 })
-        })
+            const response = await fetch("/api/analyze-image", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ image: base64 })
+            });
 
-        if (!response.ok) {
+            if (!response.ok) {
+                throw new Error(`Palvelin palautti statuksen: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.kcal) setKcal(data.kcal.toString())
+            if (data.protein) setProtein(data.protein.toString())
+            if (data.carbs) setCarbs(data.carbs.toString())
+            if (data.fat) setFat(data.fat.toString())
+            
+            setImageOpen(false)
+        } catch (error) {
+            console.error("Virhe kuvan analysoinnissa:", error);
+            alert("Kuvan lähetys epäonnistui. Kuva saattaa olla liian suuri.");
+        } finally {
             setIsLoading(false)
-            return
         }
-        
-        const data = await response.json()
-
-        if (data.kcal) setKcal(data.kcal.toString())
-        if (data.protein) setProtein(data.protein.toString())
-        if (data.carbs) setCarbs(data.carbs.toString())
-        if (data.fat) setFat(data.fat.toString())
-        setImageOpen(false)
-        setIsLoading(false)
     }
 
     useEffect(() => {
