@@ -71,7 +71,10 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
 
     const analyzeImage = async () => {
         setIsLoading(true)
-        if (!capturedImage) return
+        if (!capturedImage) {
+            setIsLoading(false)
+            return
+        }
 
         const base64 = capturedImage.split(",")[1]
 
@@ -81,6 +84,11 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
             body: JSON.stringify({ image: base64 })
         })
 
+        if (!response.ok) {
+            setIsLoading(false)
+            return
+        }
+        
         const data = await response.json()
 
         if (data.kcal) setKcal(data.kcal.toString())
@@ -158,7 +166,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
 
                 {imageOpen && (
                     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-20">
-                        <div className="bg-[#212121] border border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-80 h-auto">
+                        <div className="bg-[#212121] border border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-80 md:w-auto h-auto">
                             <div className="flex items-center justify-between">
                                 <h2 className="font-semibold">Kamera</h2>
                                 <button onClick={() => setImageOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
