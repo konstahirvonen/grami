@@ -39,14 +39,14 @@ export async function POST(request: NextRequest) {
         const text = response.text
 
         if (!text) {
-            return NextResponse.json({ error: "Malli ei palauttanut tkestiä"}, { status: 500 })
+            return NextResponse.json({ error: "Malli ei palauttanut tekstiä"}, { status: 500 })
         }
 
         const json = JSON.parse(text)
         return NextResponse.json(json)
     
     } catch (error: any) {
-        return NextResponse.json({ error: "Käsittely epäonistui", details: error.message }, { status: 500 })
+        return NextResponse.json({ error: "Käsittely epäonnistui", details: error.message }, { status: 500 })
     }
     
 }

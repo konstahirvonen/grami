@@ -129,10 +129,10 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
 
             const data = await response.json();
 
-            if (data.kcal) setKcal(data.kcal.toString())
-            if (data.protein) setProtein(data.protein.toString())
-            if (data.carbs) setCarbs(data.carbs.toString())
-            if (data.fat) setFat(data.fat.toString())
+            if (data.kcal !== undefined && data.kcal !== null) setKcal(data.kcal.toString())
+            if (data.protein !== undefined && data.protein !== null) setProtein(data.protein.toString())
+            if (data.carbs !== undefined && data.carbs != null) setCarbs(data.carbs.toString())
+            if (data.fat !== undefined && data.carbs !== null) setFat(data.fat.toString())
             
             setImageOpen(false)
         } catch (error) {
