@@ -69,7 +69,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
         reader.readAsDataURL(file)
     }
 
-    const resizeAndCompressImage = (base64Str: string, maxWidth = 1024, maxHeight = 1024): Promise<string> => {
+    const resizeAndCompressImage = (base64Str: string, maxWidth = 800, maxHeight = 800): Promise<string> => {
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.src = base64Str;
@@ -98,7 +98,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                 ctx.drawImage(img, 0, 0, width, height);
                 
 
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
                 resolve(compressedBase64);
             };
             img.onerror = (err) => reject(err);
@@ -137,7 +137,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
             setImageOpen(false)
         } catch (error) {
             console.error("Virhe kuvan analysoinnissa:", error);
-            alert("Kuvan lähetys epäonnistui. Kuva saattaa olla liian suuri.");
+            alert("Kuvan lähetys epäonnistui.");
         } finally {
             setIsLoading(false)
         }
