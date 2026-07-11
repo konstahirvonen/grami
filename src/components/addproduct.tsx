@@ -2,6 +2,7 @@
 
 import { supabase } from "@/lib/supabase"
 import { useState, useRef, useEffect } from "react"
+import { toast } from "sonner"
 
 export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { addProductsOpen: boolean, setAddProductsOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [name, setName] = useState("")
@@ -10,8 +11,6 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
     const [protein, setProtein] = useState("")
     const [carbs, setCarbs] = useState("")
     const [fat, setFat] = useState("")
-    const [message, setMessage] = useState("")
-    const [isError, setIsError] = useState(false)
     const [imageOpen, setImageOpen] = useState(false)
     const [cameraOpen, setCameraOpen] = useState(false)
     const [capturedImage, setCapturedImage] = useState<string | null>(null)
@@ -19,13 +18,6 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
     const videoRef = useRef<HTMLVideoElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [isLoading, setIsLoading] = useState(false)
-
-    
-    const showMessage = (text: string, error: boolean = false) => {
-        setMessage(text)
-        setIsError(error)
-        setTimeout(() => setMessage(""), 3000)
-    }
 
     const handleAddProduct = async () => {
         setIsLoading(true)
@@ -37,8 +29,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
             .maybeSingle()
 
         if (existing) {
-            showMessage("Kyseinen tuote on jo lisätty", true)
-            console.log("Kyseinen tuote on jo lisätty")
+            toast.error("Kyseinen tuote on jo lisätty")
             return
         }
 
@@ -248,12 +239,6 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                             <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
 
                         </div>
-                    </div>
-                )}
-
-                {message && (
-                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded-xl shadow-lg ${isError ? 'bg-red-800' : 'bg-[#10b981]'}`}>
-                        {message}
                     </div>
                 )}
             </div>

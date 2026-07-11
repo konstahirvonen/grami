@@ -3,26 +3,18 @@
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export default function SignUpPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [message, setMessage] = useState("")
-    const [isError, setIsError] = useState(false)
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [confirmPassword, setConfirmPassword] = useState("")
-
-    const showMessage = (text: string, error: boolean = false) => {
-        setMessage(text)
-        setIsError(error)
-        setTimeout(() => setMessage(""), 3000)
-    }
-
     const handleSignUp = async () => {
 
         if (password !== confirmPassword) {
-            showMessage("Salasanat eivät täsmää", true)
+            toast.error("Salasanat eivät täsmää")
             return
         }
 
@@ -31,10 +23,10 @@ export default function SignUpPage() {
         setIsLoading(true)
 
         if (error) {
-                showMessage(error.message, true)
+                toast.error(error.message)
                 setIsLoading(false)
             } else {
-                showMessage("Rekisteröinti onnistui!")
+                toast.success("Rekisteröinti onnistui!")
                 supabase.auth.signOut()
                 setTimeout(() => {router.push("/login")}, 500)
         }
@@ -76,11 +68,6 @@ export default function SignUpPage() {
                     ) : "Rekisteröidy"}
                 </button>
 
-                {message && (
-                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded-xl shadow-lg ${isError ? 'bg-red-800' : 'bg-green-800'}`}>
-                        {message}
-                    </div>
-                )}
             </div>
         </div>
     )

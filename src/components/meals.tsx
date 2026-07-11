@@ -6,6 +6,7 @@ import AddProduct from "./addproduct"
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 import SortableMealItem from "./sortablemealitem";
+import { toast } from "sonner"
 
 export default function Meals({ userId, totalCalories, setTotalCalories, totalProtein, setTotalProtein, totalCarbs, setTotalCarbs, totalFat, setTotalFat, fetchTotals } : {
     userId: string,
@@ -140,8 +141,23 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     }
 
     const handleSaveMeals = async () => {
+        const validItems = items.filter(item => item.food.trim() !== "")
+
+        if (validItems.length === 0) {
+            toast.error("Lisää vähintään yksi ruoka-aine.")
+            return
+        }
+
+        const hasIncompleteRow = validItems.some(item => item.grams.trim() === "" && item.count.trim() === "")
+
+        if (hasIncompleteRow) {
+            toast.error("Gramma tai kappalemäärä puuttuu.")
+            return
+        }
+        
+
         setIsLoading(true)
-        await handleMeals() 
+        await handleMeals()
         setMeal("")
         setItems([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
         setNewMealOpen(false)

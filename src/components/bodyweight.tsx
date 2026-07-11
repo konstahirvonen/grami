@@ -2,7 +2,7 @@
 
 import { supabase } from "@/lib/supabase"
 import { useEffect, useState } from "react"
-
+import { toast } from "sonner"
 
 export default function BodyWeight({ userId, weightData: initialData, setWeightData } : {
   userId:string,
@@ -12,14 +12,8 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
   
   {
     const [weight, setWeight] = useState("")
-    const [message, setMessage] = useState("")
     const weightData = initialData
     const [isLoading, setIsLoading] = useState(false)
-
-    const showMessage = (text: string) => {
-        setMessage(text)
-        setTimeout(() => setMessage(""), 3000)
-    }
 
     useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -50,7 +44,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
           .maybeSingle()
     
         if (existing) {
-          showMessage("Olet jo lisännyt painon tänään.")
+          toast.error("Olet jo lisännyt painon tänään.")
           setIsLoading(false)
           return
         }
@@ -67,7 +61,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
           console.log(error.message)
           setIsLoading(false)
         } else {
-          showMessage("Paino tallennettu!")
+          toast.success("Paino tallennettu!")
           setWeightData((prev: any[]) =>
             [...prev, { weight_kg: parseFloat(weight), date: today}]
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -95,11 +89,6 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
                         ) : "Lisää"}
                 </button>
               </div>
-              {message && (
-                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded-xl shadow-lg ${message.includes("tallennettu") ? "bg-[#10b981]" : "bg-red-500"}`}>
-                        {message}
-                    </div>
-                )}
               
               <div className="mt-4">
                 <table className="w-full">

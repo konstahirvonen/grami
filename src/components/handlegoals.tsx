@@ -1,8 +1,8 @@
 "use client"
 
 import { supabase } from "@/lib/supabase"
-import { error } from "console"
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 
 export default function HandleGoals({ userId, totalCalories, setTotalCalories, totalProtein, setTotalProtein, totalCarbs, setTotalCarbs, totalFat, setTotalFat, fetchTotals, historyData, setHistoryData } : {
   userId: string,
@@ -25,13 +25,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
     const [fat, setFat] = useState("")
     const [goalsOpen, setGoalsOpen] = useState(false)
     const [goals, setGoals] = useState<any>(null)
-    const [message, setMessage] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-
-    const showMessage = (text: string) => {
-        setMessage(text)
-        setTimeout(() => setMessage(""), 3000)
-    }
 
     useEffect(() => {
         if (!userId) return
@@ -83,7 +77,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
         .maybeSingle()
 
       if (existing) {
-        showMessage("Olet jo tallentanut tämän päivän lopputuloksen")
+        toast.error("Olet jo tallentanut tämän päivän lopputuloksen")
         setIsLoading(false)
         return
       }
@@ -113,7 +107,7 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
             fat: Math.round(totalFat)
           }
           
-          showMessage("Tiedot tallennettu!")
+          toast.success("Tiedot tallennettu!")
           setHistoryData(prev => [newResult, ...prev])
         }
         setIsLoading(false)
@@ -203,11 +197,6 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
                   </div>
                 </div>
               )}
-              {message && (
-                    <div className={`fixed top-4 left-1/2 -translate-x-1/2 text-white text-center px-4 py-2 rounded-xl shadow-lg ${message.includes("tallennettu") ? "bg-[#10b981]" : "bg-red-500"}`}>
-                        {message}
-                    </div>
-                )}
         </div>
     )
 }
