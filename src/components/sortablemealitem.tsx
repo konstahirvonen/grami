@@ -56,39 +56,54 @@ export default function SortableMealItem({
                       </div>
                   {m.meal_ingredients && m.meal_ingredients.map((ing: any) => (
                       
-                      <div key={ing.id} className="border-1 border-[#404040] rounded-xl p-2 font-semibold w-64 md:w-52">
+                      <div key={ing.id} className="relative group border-1 border-[#404040] rounded-xl p-2 font-semibold w-64 md:w-52">
                           
-                          <div className="flex gap-2 items-center justify-between">
-                              <p className="capitalize">{ing.products?.name}</p>
-                              <button onClick={() => {removeIngredient(ing.id, m.id)}}  className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                  </svg>
-                              </button>
-                          </div>
+                        <div className="flex gap-2 items-center justify-between">
+                            <p className="capitalize cursor-default">{ing.products?.name}</p>
+                            <button onClick={() => {removeIngredient(ing.id, m.id)}}  className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
 
-                          <div className="flex gap-2 items-center justify-between mb-1">
-                              <input
-                                  type="number" id="updateInput"
-                                  value={updatedGrams[ing.id] ?? ""}
-                                  placeholder={ing.grams !== null && ing.grams !== 0 ? `${ing.grams}  (g)` : ing.count !== null ? `${ing.count} kpl` : ""}
-                                  className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-25 text-center"
-                                  onChange={(e) => {
-                                      setUpdatedGrams((prev: any) => ({ ...prev, [ing.id]: e.target.value }))
-                                  }}
-                              />
-                              {updatedGrams[ing.id] && (
-                                  <button onClick={() => {handleUpdateMeals(ing.id)}} id="updateButton"
-                                      className="bg-[#10b981] hover:bg-[#0d9166] text-white cursor-pointer rounded-full p-1">
-                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                      </svg>
-                                  </button>
-                              )}
-                          </div>
-                          
-                          <p>Kcal: {ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.kcal / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.kcal}` : ""}</p>
-                          
+                        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-2 opacity-0 translate-y-full group-hover:opacity-100
+                                        transition-opacity bg-[#1a1a1a] border border-[#404040] rounded-xl p-3 text-xs font-normal w-56 z-50 shadow-lg">
+                            <p className="font-semibold capitalize mb-1">{ing.products?.name}</p>
+                            <div className="grid grid-cols-2">
+                                <span className="text-neutral-400">Kalorit:</span>
+                                <span>{ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.kcal / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.kcal}` : ""}</span>
+                                <span className="text-neutral-400">Proteiini:</span>
+                                <span>{ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.protein / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.totalProtein}` : ""}</span>
+                                <span className="text-neutral-400">Hiilihydraatit:</span>
+                                <span>{ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.carbs / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.carbs}` : ""}</span>
+                                <span className="text-neutral-400">Rasva:</span>
+                                <span>{ing.grams !== null && ing.grams !== 0 ? `${(ing.grams * ing.products?.fat / 100).toFixed(1)}` : ing.count !== null ? `${ing.count * ing.products?.fat}` : ""}</span>
+                            </div>
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full w-2 h-2 bg-[#1a1a1a] border-t border-l border-[#404040] rotate-45 -mb-1"></div>
+                        </div>
+
+                        <div className="flex gap-2 items-center justify-between mb-1">
+                            <input
+                                type="number" id="updateInput"
+                                value={updatedGrams[ing.id] ?? ""}
+                                placeholder={ing.grams !== null && ing.grams !== 0 ? `${ing.grams}  (g)` : ing.count !== null ? `${ing.count} kpl` : ""}
+                                className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-25 text-center"
+                                onChange={(e) => {
+                                    setUpdatedGrams((prev: any) => ({ ...prev, [ing.id]: e.target.value }))
+                                }}
+                            />
+                            {updatedGrams[ing.id] && (
+                                <button onClick={() => {handleUpdateMeals(ing.id)}} id="updateButton"
+                                    className="bg-[#10b981] hover:bg-[#0d9166] text-white cursor-pointer rounded-full p-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
+                        
+
                       </div>
                       
                   ))}

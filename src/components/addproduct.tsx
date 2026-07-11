@@ -128,7 +128,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
             setImageOpen(false)
         } catch (error) {
             console.error("Virhe kuvan analysoinnissa:", error);
-            alert("Kuvan lähetys epäonnistui.");
+            toast.error("Kuvan lähetys epäonnistui.");
         } finally {
             setIsLoading(false)
         }
