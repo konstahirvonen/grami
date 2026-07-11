@@ -235,7 +235,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         setItems([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
         await fetchTotals(userId)
         await fetchMeals()
-        setIsLoading(false)
+        setIsLoading(true)
         setNewIngredientOpen(false)
     } 
 
@@ -371,7 +371,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                         <div className="flex items-center justify-between">
                             <h2 className="font-semibold">Lisää ateria</h2>
                             <button onClick={() => setNewMealOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>
@@ -452,8 +452,10 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                     )}
 
                         <div className="flex items-center justify-center">
-                            <button onClick={addItem} className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                                +
+                            <button onClick={addItem} className="text-[#10b981] rounded-full p-1 hover:bg-neutral-900 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
                             </button>
                         </div>
 
@@ -477,7 +479,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                         <div className="flex items-center justify-between">
                             <h2 className="font-semibold">Lisää ruoka-aine</h2>
                             <button onClick={() => setNewIngredientOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>

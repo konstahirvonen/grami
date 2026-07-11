@@ -113,12 +113,12 @@ export default function WeightChart({ userId, weightData: initialData, range, se
                 </button>
             </div>
             {dateRangeOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
                     <div className="bg-[#212121] border-1 border-[#404040] rounded-xl p-6 flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <h2 className="font-semibold text-white">Valitse aikaväli</h2>
-                            <button onClick={() => setDateRangeOpen(false)} className="border-1 border-[#404040] bg-[#303030] hover:bg-neutral-900 cursor-pointer rounded-full p-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                            <button onClick={() => setDateRangeOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>

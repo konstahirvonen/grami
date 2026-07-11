@@ -148,7 +148,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                 <div className="flex items-center justify-between">
                     <h2 className="font-semibold">Lisää ruoka-aine</h2>
                     <button onClick={() => setAddProductsOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -201,11 +201,11 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
 
                 {imageOpen && (
                     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-20">
-                        <div className="bg-[#212121] border border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-80 md:w-auto h-auto">
+                        <div className="bg-[#212121] border border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-80 md:w-1/3 h-auto">
                             <div className="flex items-center justify-between">
                                 <h2 className="font-semibold">Kamera</h2>
                                 <button onClick={() => setImageOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                     </svg>
                                 </button>
