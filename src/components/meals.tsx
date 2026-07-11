@@ -136,6 +136,8 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             return false
         }
 
+        
+
         await fetchMeals()
         return true
     }
@@ -199,6 +201,20 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
 
     const handleUpdateNewIngredient = async (id: any) => {
 
+        const validItems = items.filter(item => item.food.trim() !== "")
+
+        if (validItems.length === 0) {
+            toast.error("Lisää vähintään yksi ruoka-aine.")
+            return
+        }
+
+        const hasIncompleteRow = validItems.some(item => item.grams.trim() === "" && item.count.trim() === "")
+
+        if (hasIncompleteRow) {
+            toast.error("Gramma tai kappalemäärä puuttuu.")
+            return
+        }
+
         const insertIngredientsRows = items.map((item) => ({
             meal_id: selectedMealId,
             product_id: item.productId,
@@ -215,9 +231,12 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             return
         }
         
+        setIsLoading(true)
         setItems([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
         await fetchTotals(userId)
         await fetchMeals()
+        setIsLoading(false)
+        setNewIngredientOpen(false)
     } 
 
     const searchFoods = async (query: string) => {
@@ -528,9 +547,11 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                         ))}
                         
                         <div className="flex items-center justify-center">
-                            <button onClick={() => {handleUpdateNewIngredient(selectedMealId); setNewIngredientOpen(false)}}
+                            <button onClick={() => {handleUpdateNewIngredient(selectedMealId)}}
                                 className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
-                                Tallenna
+                                {isLoading ? (
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                                ) : "Tallenna"}
                             </button>
                             {addProductsOpen && (
                                         <AddProduct addProductsOpen={addProductsOpen} setAddProductsOpen={setAddProductsOpen} />
