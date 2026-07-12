@@ -116,25 +116,25 @@ export default function HandleGoals({ userId, totalCalories, setTotalCalories, t
     return (
 
         <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 bg-[#2f2f2f] border-1 border-[#404040] rounded-xl">
-          <div className="p-4 text-center">
+          <div className="px-4 py-2 text-center">
             <p className="text-m text-white font-semibold">Kalorit</p>
             <p className="text-2xl font-bold text-white">{totalCalories.toFixed(1)}</p>
             <p className="text-m text-white font-semibold">/ {goals?.calories ?? "-"} kcal</p>
           </div>
 
-          <div className="p-4 text-center">
+          <div className="px-4 py-2 text-center">
             <p className="text-m text-white font-semibold">Proteiini</p>
             <p className="text-2xl font-bold text-white">{totalProtein.toFixed(1)}</p>
             <p className="text-m text-white font-semibold">/ {goals?.protein ?? "-"} g</p>
           </div>
 
-          <div className="p-4 text-center">
+          <div className="px-4 py-2 text-center">
             <p className="text-m text-white font-semibold">Hiilihydraatit</p>
             <p className="text-2xl font-bold text-white">{totalCarbs.toFixed(1)}</p>
             <p className="text-m text-white font-semibold">/ {goals?.carbs ?? "-"} g</p>
           </div>
 
-          <div className="p-4 text-center">
+          <div className="px-4 py-2 text-center">
             <p className="text-m text-white font-semibold">Rasva</p>
             <p className="text-2xl font-bold text-white">{totalFat.toFixed(1)}</p>
             <p className="text-m text-white font-semibold">/ {goals?.fat ?? "-"} g</p>

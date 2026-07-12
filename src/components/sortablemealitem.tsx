@@ -11,6 +11,7 @@ interface MealTotals {
 interface SortableMealItemProps {
   m: any;
   index: number,
+  meal: string,
   mealTotals: MealTotals;
   updatedGrams: any,
   setUpdatedGrams: React.Dispatch<React.SetStateAction<any>>;
@@ -25,6 +26,7 @@ interface SortableMealItemProps {
 export default function SortableMealItem({
     m,
     index,
+    meal,
     mealTotals,
     updatedGrams,
     setUpdatedGrams,
@@ -46,11 +48,11 @@ export default function SortableMealItem({
   })
 
   return (
-    <div ref={setElement} className="flex gap-2 flex-col">
+    <div ref={setElement} className="flex flex-col">
         
         
 
-        <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4 mb-4 flex items-center gap-4">
+        <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-2 mb-2 flex items-center gap-4">
 
             <button 
                 ref={handleRef}
@@ -65,10 +67,10 @@ export default function SortableMealItem({
                 </svg>
             </button>
 
-            <div className="flex flex-col gap-3 flex-1">
+            <div className="flex flex-col gap-2 flex-1">
 
                 <div className="flex">
-                    <h1 className="font-semibold px-2">Aterian nimi</h1>
+                    <h1 className="font-semibold px-2 py-1 capitalize">{m.meal}</h1>
                     <div className="flex text-sm ml-auto items-center">
                         <span className="font-semibold mr-1 bg-blue-400 text-blue-900 rounded px-2 py-0.5">{Math.round(mealTotals.protein)}p</span>
                         <span className="font-semibold mr-1 bg-amber-400 text-amber-900 rounded px-2 py-0.5">{Math.round(mealTotals.carbs)}c</span>

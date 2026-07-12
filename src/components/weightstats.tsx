@@ -47,7 +47,7 @@ export default function WeightStats({ userId, weightData: initialData, chartRang
     return (
         <div className="flex flex-col h-full">
 
-            <h2 className="p-4 text-center font-semibold text-m">Painon muutos</h2>
+            <h2 className="px-4 py-2 text-center font-semibold text-m">Painon muutos</h2>
 
             <div className="grid grid-cols-2 md:grid-cols-1 flex-1 content-between">
                 <div className="p-3 text-center">

@@ -136,8 +136,6 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             return false
         }
 
-        
-
         await fetchMeals()
         return true
     }
@@ -235,7 +233,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
         setItems([{ food: "", grams: "", count: "", productId: null as number | null, position: 0 }])
         await fetchTotals(userId)
         await fetchMeals()
-        setIsLoading(true)
+        setIsLoading(false)
         setNewIngredientOpen(false)
     } 
 
@@ -331,7 +329,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
     }
 
     return (
-        <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl p-4">
+        <div className="bg-[#2f2f2f] border-1 border-[#404040] rounded-xl px-4 py-2">
             <h2 className="font-semibold mb-2 text-center">Ateriat</h2>
 
             <div>
@@ -366,6 +364,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                         key={m.id}
                                         m={m}
                                         index={index}
+                                        meal={meal}
                                         mealTotals={mealTotals}
                                         updatedGrams={updatedGrams}
                                         setUpdatedGrams={setUpdatedGrams}
@@ -393,7 +392,7 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
             
             {newMealOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
-                    <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl p-4 flex flex-col gap-4 w-full max-w-96 mx-4">
+                    <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl px-4 py-2 flex flex-col gap-2 w-full max-w-96 mx-4">
 
                         <div className="flex items-center justify-between">
                             <h2 className="font-semibold">Lisää ateria</h2>
@@ -402,11 +401,23 @@ export default function Meals({ userId, totalCalories, setTotalCalories, totalPr
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>
+
+                        </div>
+
+                        <div>
+                            <input type="text" placeholder="Aterian nimi"
+                                className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-full"
+                                value={meal}   
+                                onChange={(e) => {
+                                    setMeal(e.target.value)
+                                }}     
+                            />
                         </div>
 
                         {items.map((item, index) => (
                             <div key={index} className="flex items-center justify-between gap-2">
                                 <div ref={dropdownRef} className="relative flex-1">
+
                                     <input type="text" placeholder="Ruoka-aine"
                                         className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2 w-full"
                                         value={item.food}

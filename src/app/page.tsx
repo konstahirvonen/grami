@@ -144,7 +144,7 @@ export default function Home({ userId } : { userId: string }) {
 
           <BodyWeight userId={user.id} weightData={weightData} setWeightData={setWeightData} />
 
-          <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl p-4 flex-1">
+          <div className="border-1 border-[#404040] bg-[#2f2f2f] rounded-xl px-4 py-2 flex-1">
 
             {user && <WeightChart userId={user.id} weightData={weightData} range={chartRange} setRange={setChartRange} />}
 
@@ -175,7 +175,7 @@ export default function Home({ userId } : { userId: string }) {
 
         </div>
 
-        <div className="mt-4 border-1 border-[#404040] bg-[#2f2f2f] p-4 rounded-xl">
+        <div className="mt-4 border-1 border-[#404040] bg-[#2f2f2f] px-4 py-2 rounded-xl">
           <h2 className="font-semibold mb-2 text-center">Historia</h2>
           <div className="h-auto overflow-y-auto">
             <table className="w-full table-fixed border-separate border-spacing-0">
@@ -192,10 +192,10 @@ export default function Home({ userId } : { userId: string }) {
                   {historyData.map((row) => (
                     <tr key={row.id ?? row.date}>
                       <td className="border border-[#404040]">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow", year: "2-digit"})}</td>
-                      <td className="border border-[#404040]">{row.calories}</td>
-                      <td className="border border-[#404040]">{row.protein}</td>
-                      <td className="border border-[#404040]">{row.carbs}</td>
-                      <td className="border border-[#404040]">{row.fat}</td>
+                      <td className="border border-[#404040]">{row.calories.toFixed(2)}</td>
+                      <td className="border border-[#404040]">{row.protein.toFixed(2)}</td>
+                      <td className="border border-[#404040]">{row.carbs.toFixed(2)}</td>
+                      <td className="border border-[#404040]">{row.fat.toFixed(2)}</td>
                     </tr>
                   ))}
               </tbody>
