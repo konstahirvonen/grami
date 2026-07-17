@@ -69,7 +69,7 @@ export default function SortableMealItem({
 
             <div className="flex flex-col gap-2 flex-1">
 
-                <div className="flex">
+                <div className="flex items-center">
                     <h1 className="font-semibold px-2 py-1 capitalize">{m.meal}</h1>
                     <div className="flex text-sm ml-auto items-center">
                         <span className="font-semibold mr-1 bg-blue-400 text-blue-900 rounded px-2 py-0.5">{Math.round(mealTotals.protein)}p</span>
@@ -87,13 +87,13 @@ export default function SortableMealItem({
 
 
                 <div className="flex justify-between gap-4">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                     {m.meal_ingredients && m.meal_ingredients.map((ing: any) => (
                         
                         <div key={ing.id} className="relative group border-1 border-[#404040] rounded-xl p-2 font-semibold w-64 md:w-52">
                             
                         <div className="flex gap-2 items-center justify-between">
-                            <p className="capitalize cursor-default">{ing.products?.name}</p>
+                            <p className="capitalize cursor-default truncate">{ing.products?.name}</p>
                             <button onClick={() => {removeIngredient(ing.id, m.id)}}  className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
