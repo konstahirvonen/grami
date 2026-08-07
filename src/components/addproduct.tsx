@@ -30,6 +30,13 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
 
         if (existing) {
             toast.error("Kyseinen tuote on jo lisätty")
+            setIsLoading(false)
+            return
+        }
+
+        if (!name.trim()) {
+            toast.error("Tuotteen nimi on pakollinen")
+            setIsLoading(false)
             return
         }
 
@@ -158,7 +165,7 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                     onChange={(e) => setBrand(e.target.value)}
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
-                <input type="text" placeholder="Tuote" value={name}
+                <input type="text" placeholder="Tuote *" value={name} required
                     onChange={(e) => setName(e.target.value)}
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
@@ -166,19 +173,19 @@ export default function AddProduct( {addProductsOpen, setAddProductsOpen} : { ad
                     onChange={(e) => setKcal(e.target.value)}
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
-                <input type="number" placeholder="Proteiini / 100 g" value={protein}
-                    onChange={(e) => setProtein(e.target.value)}
+                <input type="number" placeholder="Rasva / 100 g" value={fat}
+                    onChange={(e) => setFat(e.target.value)}
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
                 <input type="number" placeholder="Hiilihydraatit / 100 g" value={carbs}
                     onChange={(e) => setCarbs(e.target.value)}
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
-                <input type="number" placeholder="Rasva / 100 g" value={fat}
-                    onChange={(e) => setFat(e.target.value)}
+                <input type="number" placeholder="Proteiini / 100 g" value={protein}
+                    onChange={(e) => setProtein(e.target.value)}
                     className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
-
+                
                 <div className="flex items-center justify-between">
 
                     <div className="w-10"></div>

@@ -73,8 +73,8 @@ export default function SortableMealItem({
                     <h1 className="font-semibold px-2 py-1 capitalize">{m.meal}</h1>
                     <div className="flex text-sm ml-auto items-center">
                         <span className="font-semibold mr-1 bg-blue-400 text-blue-900 rounded px-2 py-0.5">{Math.round(mealTotals.protein)}p</span>
-                        <span className="font-semibold mr-1 bg-amber-400 text-amber-900 rounded px-2 py-0.5">{Math.round(mealTotals.carbs)}c</span>
-                        <span className="font-semibold mr-1 bg-rose-400 text-rose-900 rounded px-2 py-0.5">{Math.round(mealTotals.fat)}f</span>
+                        <span className="font-semibold mr-1 bg-amber-400 text-amber-900 rounded px-2 py-0.5">{Math.round(mealTotals.carbs)}hh</span>
+                        <span className="font-semibold mr-1 bg-rose-400 text-rose-900 rounded px-2 py-0.5">{Math.round(mealTotals.fat)}r</span>
                     </div>
                     <span className="px-2 py-1">{Math.round(mealTotals.calories)} kcal</span>
                     <button onClick={() => {removeMeal(m.id)}} 
