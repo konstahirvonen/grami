@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
@@ -12,12 +12,11 @@ export default function LoginPage() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
-
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-
         setIsLoading(true)
+
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
         
         if (error) {
             toast.error("Kirjautuminen epäonnistui. Tarkista sähköposti tai salasana.")
@@ -30,21 +29,25 @@ export default function LoginPage() {
     }
 
     return (
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} autoComplete="on">
             <div className="min-h-screen flex items-center justify-center">
                 <div className="flex flex-col gap-4 w-full max-w-sm p-8">
                     <h1 className="text-2xl font-bold text-center">Grami</h1>
 
                     <input
                         type="email"
+                        name="email"
+                        autoComplete="username"
                         placeholder="Sähköposti"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="border-1 border-[#404040] bg-[#303030] rounded-xl px-3 py-2"
                     />
 
-                    <input 
+                    <input
                         type="password"
+                        name="password"
+                        autoComplete="current-password"
                         placeholder="Salasana"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}

@@ -156,7 +156,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
                   <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl px-4 py-2 flex flex-col gap-2 w-full max-w-96 mx-4">
                     
                     <div className="flex items-center justify-between">
-                        <h2 className="font-semibold">Lisää paino</h2>
+                        <h2 className="font-semibold">Lisää paino jälkeenpäin</h2>
                         <button onClick={() => setAddPreviousOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
