@@ -97,13 +97,15 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
           return
         }
     
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("weight")
           .insert({
             user_id: userId,
             weight_kg: parseFloat(weight),
             date: today
           })
+          .select("id, user_id, weight_kg, date")
+          .single();
           
         if (error) {
           console.log(error.message)
@@ -111,8 +113,10 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
         } else {
           toast.success("Paino tallennettu!")
           setWeightData((prev: WeightEntry[]) =>
-            [...prev, { weight_kg: parseFloat(weight), date: today}]
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            [...prev, data].sort(
+              (a, b) =>
+                new Date(b.date).getTime() - new Date(a.date).getTime()
+            )
           )
           setWeight("")
         }
