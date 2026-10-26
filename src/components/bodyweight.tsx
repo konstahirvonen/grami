@@ -26,7 +26,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
     const [addPreviousOpen, setAddPreviousOpen] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
     const [changeWeightOpen, setChangeWeightOpen] = useState(false)
-    const [selectedWeightId, setSelectedWeightId] = useState(null)
+    const [selectedWeightId, setSelectedWeightId] = useState<string | null>(null)
     const [updateWeight, setUpdateWeight] = useState("")
 
     const toLocalDate = (value: Date) => {
