@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 type WeightEntry = {
-  id?: string
+  id: number
   user_id?: string
   weight_kg: number
   date: string
@@ -26,7 +26,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
     const [addPreviousOpen, setAddPreviousOpen] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
     const [changeWeightOpen, setChangeWeightOpen] = useState(false)
-    const [selectedWeightId, setSelectedWeightId] = useState<string | null>(null)
+    const [selectedWeightId, setSelectedWeightId] = useState<number | null>(null)
     const [updateWeight, setUpdateWeight] = useState("")
 
     const toLocalDate = (value: Date) => {
