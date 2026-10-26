@@ -25,6 +25,9 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
     const [isLoading, setIsLoading] = useState(false)
     const [addPreviousOpen, setAddPreviousOpen] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
+    const [changeWeightOpen, setChangeWeightOpen] = useState(false)
+    const [selectedWeightId, setSelectedWeightId] = useState(null)
+    const [updateWeight, setUpdateWeight] = useState("")
 
     const toLocalDate = (value: Date) => {
       return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`
@@ -156,6 +159,40 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
         setIsLoading(false)
     }
 
+    const selectedWeight = weightData.find(
+      (row) => row.id === selectedWeightId
+    )
+
+    const handleUpdateWeight = async () => {
+      setIsLoading(true)
+
+      const { data, error } = await supabase
+        .from("weight")
+        .update({
+          weight_kg: updateWeight,
+        })
+        .eq("id", selectedWeightId)
+        .eq("user_id", userId)
+        .select("id, date, weight_kg")
+        .single()
+
+      if (error) {
+      console.log(error.message)
+      setIsLoading(false)
+      } else {
+        toast.success("Paino päivitetty!")
+        setWeightData((prev: WeightEntry[]) =>
+          prev
+            .map((row) => row.id === data.id ? {...row, ...data} : row
+          )
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())  
+        )
+        setUpdateWeight("")
+        setChangeWeightOpen(false)
+      }
+      setIsLoading(false)
+    }
+
     return (
         <div className="relative border-1 border-[#404040] bg-[#2f2f2f] px-4 py-2 rounded-xl">
           
@@ -275,6 +312,7 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
                   </thead>
                 </table>
               </div>
+
               <div className="h-64 overflow-y-auto weight-table -mr-1">
                 <table className="w-full border-separate border-spacing-0">
                   <colgroup>
@@ -285,11 +323,62 @@ export default function BodyWeight({ userId, weightData: initialData, setWeightD
                       {weightData.map((row) => (
                         <tr key={row.id ?? row.date}>
                           <td className="border border-[#404040] pr-2">{new Date(row.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})}</td>
-                          <td className="border border-[#404040] pr-2">{row.weight_kg}</td>
+                          <td className="border border-[#404040] pr-1">{row.weight_kg}
+
+                            <button onClick={() => {setChangeWeightOpen(true); setSelectedWeightId(row.id)}} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1 translate-y-0.25 ml-1">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-3.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                              </svg>
+                            </button>
+
+                          </td>
                         </tr>
                       ))}
                   </tbody>
                 </table>
+
+                {changeWeightOpen && selectedWeight && (
+                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-10">
+                  <div className="relative bg-[#212121] border-1 border-[#404040] rounded-xl px-4 py-2 flex flex-col gap-2 w-full max-w-96 mx-4">
+                    
+                    <div className="flex items-center justify-between">
+                        <h2 className="font-semibold">Muuta painoa</h2>
+                        <button onClick={() => setChangeWeightOpen(false)} className="hover:bg-neutral-900 cursor-pointer rounded-full p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        placeholder="kg"
+                        value={updateWeight}
+                        onChange={(e) => setUpdateWeight(e.target.value)}
+                        className="border border-[#404040] rounded-xl px-3 py-2 text-white w-full"
+                      />
+
+                      <input
+                        placeholder="date"
+                        value={new Date(selectedWeight.date).toLocaleDateString("fi-FI", { day: "2-digit", month: "narrow"})}
+                        readOnly
+                        className="border border-[#404040] rounded-xl px-3 py-2 text-white w-full"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                      <button onClick={handleUpdateWeight} disabled={isLoading}
+                          className="border-1 border-[#404040] bg-[#10b981] text-white font-semibold rounded-xl px-4 py-2 hover:bg-[#0d9166] cursor-pointer">
+                          {isLoading ? (
+                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                          ) : "Tallenna"}
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+                )}
               </div>
             </div>
     )
